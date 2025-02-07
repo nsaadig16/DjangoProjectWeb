@@ -93,12 +93,13 @@ fabric.properties
 # that are supposed to be shared within teams.
 
 .idea/*
-.idea/vcs.xml
-.idea/modules.xml
-.idea/DjangoProjectWeb.imlç
-.idea/inspectionProfiles/profiles_settings.xml
 !.idea/codeStyles
 !.idea/runConfigurations
 discord.xml
 
 # End of https://www.toptal.com/developers/gitignore/api/pycharm+all
+/vcs.xml
+/inspectionProfiles/profiles_settings.xml
+/modules.xml
+/misc.xml
+/DjangoProjectWeb.iml
