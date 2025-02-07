@@ -93,7 +93,10 @@ fabric.properties
 # that are supposed to be shared within teams.
 
 .idea/*
-.idea/
+.idea/vcs.xml
+.idea/modules.xml
+.idea/DjangoProjectWeb.imlç
+.idea/inspectionProfiles/profiles_settings.xml
 !.idea/codeStyles
 !.idea/runConfigurations
 discord.xml
