@@ -4,35 +4,31 @@
 
 {% block content %}
 <div class="container d-flex justify-content-center align-items-center mt-5">
-    <div class="col-md-6">
-        <h1 class="text-center">Registrarse</h1>
-        <form method="post" class="mt-4">
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="id_username">Usuario:</label>
-                {{ form.username }}
-            </div>
-            <div class="form-group mt-3">
-                <label for="id_email">Correo Electrónico:</label>
-                {{ form.email }}
-            </div>
-            <div class="form-group mt-3">
-                <label for="id_password1">Contraseña:</label>
-                {{ form.password1 }}
-            </div>
-            <div class="form-group mt-3">
-                <label for="id_password2">Confirmar Contraseña:</label>
-                {{ form.password2 }}
-            </div>
-            {% if form.errors %}
-                <div class="alert alert-danger mt-3">
-                    Corrige los errores en el formulario.
-                </div>
-            {% endif %}
-            <button type="submit" class="btn btn-success mt-3 w-100">Registrarse</button>
-        </form>
+<!-- From Uiverse.io by ammarsaa -->
+<form class="form">
+    <p class="title">Register </p>
+    <p class="message">Signup now and get full access to our app. </p>
 
-        <p class="mt-4 text-center">¿Ya tienes una cuenta? <a href="{% url 'login' %}">Inicia sesión aquí</a></p>
-    </div>
+    <label>
+        <input class="input" type="text" placeholder="" required="">
+        <span>Username</span>
+    </label>
+
+    <label>
+        <input class="input" type="email" placeholder="" required="">
+        <span>Email</span>
+    </label>
+
+    <label>
+        <input class="input" type="password" placeholder="" required="">
+        <span>Password</span>
+    </label>
+    <label>
+        <input class="input" type="password" placeholder="" required="">
+        <span>Confirm password</span>
+    </label>
+    <button class="submit">Submit</button>
+    <p class="signin">Already have an acount ? <a href="{% url 'login' %}">Signin</a> </p>
+</form>
 </div>
 {% endblock %}

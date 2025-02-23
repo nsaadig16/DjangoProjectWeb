@@ -18,27 +18,45 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container">
                 <a class="navbar-brand" href="{% url 'home' %}">TCG</a>
-                <div class="collapse navbar-collapse">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
                         {% if user.is_authenticated %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'home' %}">Cerrar sesión</a>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    {{ user.username }}
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <li><a class="dropdown-item" href="#">Perfil</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'como_jugar' %}">Como Jugar</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <button id="toggle-theme" class="dropdown-item btn btn-outline-dark w-100">
+                                            Modo Oscuro
+                                        </button>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a href="{% url 'logout' %}" class="dropdown-item text-danger">Cerrar sesión</a></li>
+                                </ul>
                             </li>
+
                         {% else %}
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'home' %}">Inicio</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'como_jugar' %}">Como Jugar</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'login' %}">Iniciar sesión</a>
                             </li>
                         {% endif %}
                     </ul>
-                    <!-- Botón para cambiar el tema -->
-                    <button id="toggle-theme" class="btn btn-outline-dark ms-3">Modo Oscuro</button>
                 </div>
             </div>
         </nav>
-
     </header>
 
     <main class="container mt-4">

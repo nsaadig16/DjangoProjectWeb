@@ -27,3 +27,6 @@ def register(request):
         form = CustomUserCreationForm()
 
     return render(request, "register.html", {"form": form})
+
+def como_jugar(request):
+    return render(request, 'como_jugar.html')
