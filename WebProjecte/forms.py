@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 
+
 class CustomUserCreationForm(forms.ModelForm):
     password1 = forms.CharField(
         label="Contraseña",
