@@ -12,6 +12,6 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('como-jugar/', views.como_jugar, name='como_jugar'),
 
-    path('profile/', profile_view, name='profile'),
+    path('profile/', views.profile_view, name='profile')
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
