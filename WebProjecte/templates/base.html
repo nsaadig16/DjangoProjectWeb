@@ -22,10 +22,18 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
+                    <ul class="navbar-nav ms-auto align-items-center">
                         {% if user.is_authenticated %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'home' %}">Home</a>
+                            </li>
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    {% if user.profile.profile_image %}
+                                        <img src="{{ user.profile.profile_image.url }}" alt="Imagen de perfil" class="rounded-circle" width="30" height="30" style="object-fit: cover; margin-right: 12px;">
+                                    {% else %}
+                                        <img src="{% static 'default.jpg' %}" alt="Imagen de perfil" class="rounded-circle" width="30" height="30" style="object-fit: cover; margin-right: 12px;">
+                                    {% endif %}
                                     {{ user.username }}
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -33,7 +41,7 @@
                                     <li><a class="dropdown-item" href="{% url 'como_jugar' %}">Como Jugar</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li>
-                                        <button id="toggle-theme" class="dropdown-item btn btn-outline-dark w-100">
+                                        <button id="toggle-theme" class="dropdown-item btn">
                                             Modo Oscuro
                                         </button>
                                     </li>

@@ -40,7 +40,7 @@ h2 {
 /* Imagen de perfil */
 .profile-image {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 100px;
 }
 
 .profile-image img {
@@ -48,7 +48,6 @@ h2 {
   height: 150px;
   object-fit: cover;
   border-radius: 50%;
-  border: 5px solid var(--light-gray);
   transition: var(--transition);
   box-shadow: var(--box-shadow);
 }
