@@ -95,3 +95,9 @@ def register(request):
 
 def como_jugar(request):
     return render(request, 'como_jugar.html')
+
+def card(request):
+    return render(request,'card.html')
+
+def cards(request):
+    return render(request,'cards.html')

@@ -1,10 +1,26 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+  <meta charset="UTF-8">
+  <title>Colección de Cartas</title>
+  <link rel="stylesheet" href="{% static 'colection.css' %}">
 </head>
 <body>
+  <header>
+    <h1>Colección Épica</h1>
+    <div class="filters">
+      <input type="text" id="search" placeholder="Buscar por nombre...">
+      <select id="typeFilter">
+        <option value="">Todos los tipos</option>
+        <option value="Human">Human</option>
+        <option value="Beast">Beast</option>
+      </select>
+    </div>
+  </header>
 
+  <main id="cardContainer" class="collection"></main>
+
+  <script src="{% static 'script.js' %}"></script>
 </body>
 </html>
