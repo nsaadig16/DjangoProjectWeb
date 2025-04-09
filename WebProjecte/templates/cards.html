@@ -1,26 +1,27 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Colección de Cartas</title>
-  <link rel="stylesheet" href="{% static 'colection.css' %}">
-</head>
-<body>
-  <header>
-    <h1>Colección Épica</h1>
-    <div class="filters">
-      <input type="text" id="search" placeholder="Buscar por nombre...">
-      <select id="typeFilter">
-        <option value="">Todos los tipos</option>
-        <option value="Human">Human</option>
-        <option value="Beast">Beast</option>
-      </select>
-    </div>
-  </header>
+{% block title %}
+Colección de Cartas
+{% endblock %}
 
-  <main id="cardContainer" class="card-grid"></main>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'colection.css' %}">
+{% endblock %}
 
-  <script src="{% static 'script.js' %}"></script>
-</body>
-</html>
+{% block content %}
+<div class="search-container">
+  <h1 class="search-title">Colección</h1>
+  <div class="search-form">
+    <input type="text" id="search" class="search-input" placeholder="Buscar por nombre...">
+    <select id="typeFilter" class="search-select">
+      <option value="">Todos los tipos</option>
+      <option value="Human">Human</option>
+      <option value="Beast">Beast</option>
+    </select>
+  </div>
+</div>
+
+<main id="cardContainer" class="card-grid"></main>
+
+<script src="{% static 'script.js' %}"></script>
+{% endblock %}
