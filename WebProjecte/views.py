@@ -4,12 +4,14 @@ from django.shortcuts import redirect
 from .forms import CustomUserCreationForm
 from .models import Profile
 from django.contrib.auth.decorators import login_required
-
+from django.http import JsonResponse
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django import forms
+from .models import Card
 
-
+from django.contrib.auth.decorators import user_passes_test
+from .forms import CardForm
 # Create your views here.
 
 def home(request):
@@ -95,3 +97,39 @@ def register(request):
 
 def como_jugar(request):
     return render(request, 'como_jugar.html')
+
+def card(request):
+    return render(request,'card.html')
+
+def cards(request):
+    cartas = Card.objects.all().select_related('rarity', 'card_set')
+    return render(request, 'cards.html', {'cartas': cartas})
+
+def api_cartas(request):
+    cartas = Card.objects.select_related('rarity')
+    data = [{
+        'nombre': carta.title,
+        'imagen': carta.image_url,
+        'texto': carta.description,
+        'poder': getattr(carta, 'poder', '?'),
+        'coste': getattr(carta, 'coste', 0),
+        'tipo': carta.rarity.title
+    } for carta in cartas]
+    return JsonResponse(data, safe=False)
+
+# Asegúrate de que solo los administradores puedan acceder
+def is_admin(user):
+    return user.is_staff
+
+
+@user_passes_test(is_admin)
+def add_card(request):
+    if request.method == 'POST':
+        form = CardForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('cards')  # redirigir a la lista de cartas o donde prefieras
+    else:
+        form = CardForm()
+
+    return render(request, 'add_card.html', {'form': form})
