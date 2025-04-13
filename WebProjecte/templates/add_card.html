@@ -3,6 +3,11 @@
 {% block title %}Añadir Carta{% endblock %}
 
 {% block content %}
+    <head>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'add_card.css' %}">
+        <title></title>
+    </head>
 <div class="container">
     <h2>Añadir Carta</h2>
     {% if user.is_staff %}
@@ -19,108 +24,4 @@
     </p>
     {% endif %}
 </div>
-
-<style>
-/* Variables base para colores y estilos */
-:root {
-  --primary-color: #007bff;
-  --secondary-color: #6c757d;
-  --success-color: #28a745;
-  --danger-color: #dc3545;
-  --white: #ffffff;
-  --dark: #343a40;
-  --gray: #6c757d;
-  --light-gray: #f8f9fa;
-  --box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  --border-radius: 10px;
-  --transition: all 0.3s ease;
-}
-
-/* General */
-body {
-  font-family: 'Arial', sans-serif;
-  background-color: var(--light-gray);
-  color: var(--dark);
-  line-height: 1.6;
-  margin: 0;
-  padding: 0;
-}
-
-.container {
-  max-width: 600px;
-  margin: 50px auto;
-  padding: 20px 30px;
-  background-color: var(--white);
-  border-radius: var(--border-radius);
-  box-shadow: var(--box-shadow);
-}
-
-/* Cabecera del formulario */
-h2 {
-  font-size: 24px;
-  font-weight: bold;
-  color: var(--primary-color);
-  text-align: center;
-  margin-bottom: 20px;
-  border-bottom: 2px solid var(--primary-color);
-  padding-bottom: 10px;
-}
-
-/* Estilo del formulario */
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-input, select, textarea {
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  border: 1px solid var(--gray);
-  border-radius: var(--border-radius);
-  outline: none;
-  transition: var(--transition);
-}
-
-input:focus, select:focus, textarea:focus {
-  border-color: var(--primary-color);
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-}
-
-textarea {
-  resize: none;
-  height: 100px;
-}
-
-/* Botón de enviar */
-button {
-  padding: 12px 20px;
-  font-size: 16px;
-  font-weight: bold;
-  color: var(--white);
-  background-color: var(--primary-color);
-  border: none;
-  border-radius: var(--border-radius);
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-button:hover {
-  background-color: #0056b3;
-  box-shadow: 0 4px 8px rgba(0, 91, 187, 0.3);
-}
-
-button:active {
-  transform: translateY(2px);
-}
-
-/* Mensaje para permisos insuficientes */
-.no-permissions {
-  font-size: 18px;
-  color: var(--danger-color);
-  text-align: center;
-  margin-top: 20px;
-}
-</style>
 {% endblock %}

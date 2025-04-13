@@ -1,4 +1,4 @@
-/* Variables base para colores y estilos */
+/* Estilos mejorados para el perfil de usuario */
 :root {
   --primary-color: #3f51b5;
   --accent-color: #dc3545;
@@ -12,17 +12,11 @@
   --border-radius: 8px;
 }
 
-/* Estilos generales */
 body {
   font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background-color: var(--light-gray);
+  background-color: #f5f5f5;
   color: var(--text-color);
   line-height: 1.6;
-}
-
-body.dark-mode {
-  background-color: #121212;
-  color: var(--white);
 }
 
 .container {
@@ -34,11 +28,6 @@ body.dark-mode {
   box-shadow: var(--box-shadow);
 }
 
-body.dark-mode .container {
-  background-color: #1e1e1e;
-}
-
-/* Cabecera del perfil */
 h2 {
   font-weight: 600;
   color: var(--primary-color);
@@ -48,50 +37,46 @@ h2 {
   text-align: center;
 }
 
-body.dark-mode h2 {
-  color: var(--white);
-  border-bottom-color: var(--dark-gray);
-}
-
 /* Imagen de perfil */
 .profile-image {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 100px;
 }
 
-.profile-pic {
-  width: 200px;
-  height: 200px;
+.profile-image img {
+  width: 150px;
+  height: 150px;
   object-fit: cover;
   border-radius: 50%;
-  border: 5px solid var(--white); /* Adding white border to make it visible in dark mode */
   transition: var(--transition);
   box-shadow: var(--box-shadow);
 }
 
-.profile-pic:hover {
+.profile-image img:hover {
   transform: scale(1.05);
   border-color: var(--primary-color);
 }
 
-/* Estilo de los formularios */
-.profile-form .form-group {
+.profile-image p {
+  font-style: italic;
+  color: var(--dark-gray);
+  margin-top: 15px;
+}
+
+/* Formulario */
+.form-group {
   margin-bottom: 25px;
 }
 
-.profile-form label {
+label {
   display: block;
   margin-bottom: 8px;
   font-weight: 600;
   color: var(--primary-color);
 }
 
-body.dark-mode .profile-form label {
-  color: var(--white);
-}
-
-.profile-form input[type="text"],
-.profile-form input[type="password"] {
+input[type="text"],
+input[type="password"] {
   width: 100%;
   padding: 12px;
   border: 1px solid var(--medium-gray);
@@ -101,27 +86,44 @@ body.dark-mode .profile-form label {
   font-size: 16px;
 }
 
-.profile-form input[type="text"]:focus,
-.profile-form input[type="password"]:focus {
+input[type="text"]:focus,
+input[type="password"]:focus {
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.25);
   outline: none;
 }
 
-body.dark-mode .profile-form input[type="text"],
-body.dark-mode .profile-form input[type="password"] {
-  background-color: #333;
-  color: var(--white);
-  border-color: var(--dark-gray);
-}
-
-.profile-form input[type="file"] {
+input[type="file"] {
   padding: 10px 0;
   cursor: pointer;
 }
 
-/* Botón de envío */
-.profile-form button {
+.file-input-wrapper {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  background-color: var(--light-gray);
+  border-radius: var(--border-radius);
+  padding: 10px 15px;
+  margin-top: 5px;
+}
+
+.file-input-wrapper input[type="file"] {
+  font-size: 100px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.file-input-wrapper span {
+  display: inline-block;
+  color: var(--dark-gray);
+  font-weight: 500;
+}
+
+button {
   background-color: var(--accent-color);
   color: var(--white);
   border: none;
@@ -137,58 +139,44 @@ body.dark-mode .profile-form input[type="password"] {
   letter-spacing: 1px;
 }
 
-.profile-form button:hover {
+button:hover {
   background-color: #b91d2e;
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
 }
 
-.profile-form button:active {
+button:active {
   transform: translateY(0);
 }
 
 /* Efecto de animación en los campos del formulario */
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.profile-form .form-group {
-    animation: fadeIn 0.5s ease-out forwards;
+.form-group {
+  animation: fadeIn 0.5s ease-out forwards;
 }
 
-.profile-form .form-group:nth-child(1) {
-    animation-delay: 0.1s;
-}
-
-.profile-form .form-group:nth-child(2) {
-    animation-delay: 0.2s;
-}
-
-.profile-form .form-group:nth-child(3) {
-    animation-delay: 0.3s;
-}
+.form-group:nth-child(1) { animation-delay: 0.1s; }
+.form-group:nth-child(2) { animation-delay: 0.2s; }
+.form-group:nth-child(3) { animation-delay: 0.3s; }
 
 /* Responsividad */
 @media (max-width: 768px) {
-    .container {
-        padding: 20px;
-        margin: 15px;
-        width: auto;
-    }
+  .container {
+    padding: 20px;
+    margin: 15px;
+    width: auto;
+  }
 
-    .profile-form input[type="text"],
-    .profile-form input[type="password"] {
-        padding: 10px;
-    }
+  input[type="text"],
+  input[type="password"] {
+    padding: 10px;
+  }
 
-    .profile-form button {
-        padding: 12px 20px;
-    }
+  button {
+    padding: 12px 20px;
+  }
 }
