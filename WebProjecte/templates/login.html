@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Iniciar Sesión - TCG{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center mt-5">
+    <form method="POST" class="form">
+        {% csrf_token %}
+        <p class="title">Sign in</p>
+
+        <label>
+            <input class="input" type="text" name="username" placeholder="" required="">
+            <span>Username</span>
+        </label>
+
+        <label>
+            <input class="input" type="password" name="password" placeholder="" required="">
+            <span>Password</span>
+        </label>
+
+        {% if form.non_field_errors %}
+        <div class="error">
+            {% for error in form.non_field_errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <button class="submit" type="submit">Submit</button>
+        <p class="register">Don't have an account? <a href="{% url 'register' %}">Sign up here</a></p>
+    </form>
+</div>
+{% endblock %}

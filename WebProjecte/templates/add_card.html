@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Añadir Carta{% endblock %}
+
+{% block content %}
+    <head>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'add_card.css' %}">
+        <title></title>
+    </head>
+<div class="container">
+    <h2>Añadir Carta</h2>
+    {% if user.is_staff %}
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.as_p }}
+        </div>
+        <button type="submit">Guardar</button>
+    </form>
+    {% else %}
+    <p class="no-permissions">
+        No tienes permisos para añadir cartas.
+    </p>
+    {% endif %}
+</div>
+{% endblock %}
