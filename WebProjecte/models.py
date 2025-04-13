@@ -8,7 +8,7 @@ from django.dispatch import receiver
 class Collection(models.Model):
     user=models.OneToOneField(User, on_delete=models.CASCADE)
     def __str__(self):
-        return f"Collection of {self.user.name}"
+        return f"Collection of {self.user.username}"
 
 class Rarity(models.Model):
     title=models.CharField(max_length=100)
