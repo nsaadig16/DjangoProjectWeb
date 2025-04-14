@@ -16,12 +16,12 @@
 
     card.innerHTML = `
       <div class="card-face card-front">
-        <div class="mana-cost">${carta.coste}</div>
+        <div class="mana-cost">${carta.coste || ''}</div>
         <div class="card-header">${carta.nombre}</div>
         <img class="card-image" src="${carta.imagen}" alt="Imagen de carta">
         <div class="card-type">Legendary Creature – ${carta.tipo}</div>
         <div class="card-text">${carta.texto}</div>
-        <div class="card-power">${carta.poder}</div>
+        <div class="card-power">${carta.poder || ''}</div>
       </div>
 
       <div class="card-face card-back">
@@ -57,7 +57,8 @@
   searchInput.addEventListener('input', renderCartas);
   typeFilter.addEventListener('change', renderCartas);
 
-  fetch('/api/cartas/')
+  // CAMBIADO: ahora usamos el endpoint personalizado
+  fetch('/api/mis-cartas/')
     .then(response => response.json())
     .then(data => {
       cartas = data;

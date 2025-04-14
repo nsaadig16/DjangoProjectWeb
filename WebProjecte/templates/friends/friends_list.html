@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Amigos{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Amigos de {{ request.user.username }}</h1>
+
+    <h2>Mis amigos:</h2>
+        <ul class="list-group mb-4">
+            {% for friend in request.user.profile.friends.all %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{ friend.user.username }}
+                    <a href="{% url 'remove_friend' friend.user.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                </li>
+            {% empty %}
+                <li class="list-group-item">No tienes amigos aún 😢</li>
+            {% endfor %}
+        </ul>
+
+    <h2>Solicitudes recibidas:</h2>
+    <ul class="list-group mb-4">
+        {% for fr in request.user.received_requests.all %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ fr.from_user.username }}
+                <div>
+                    <a href="{% url 'accept_friend_request' fr.id %}" class="btn btn-success btn-sm">Aceptar</a>
+                    <a href="{% url 'reject_friend_request' fr.id %}" class="btn btn-danger btn-sm">Rechazar</a>
+                </div>
+            </li>
+        {% empty %}
+            <li class="list-group-item">No tienes solicitudes pendientes.</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Buscar usuarios:</h2>
+    <form method="GET" class="input-group mb-3">
+        <input type="text" name="q" class="form-control" placeholder="Buscar usuario..." value="{{ query }}">
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+
+    {% if query %}
+        <h3>Resultados para "{{ query }}":</h3>
+        <ul class="list-group">
+            {% for user in search_results %}
+                {% if user.profile not in request.user.profile.friends.all and user != request.user %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ user.username }}
+                        <a href="{% url 'send_friend_request' user.id %}" class="btn btn-info btn-sm">Enviar solicitud</a>
+                    </li>
+                {% endif %}
+            {% empty %}
+                <li class="list-group-item">No se encontraron usuarios.</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+{% endblock %}

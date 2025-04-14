@@ -2,16 +2,17 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import logout as auth_logout, login
 from django.shortcuts import redirect
 from .forms import CustomUserCreationForm
-from .models import Profile
+from django.db.models import Q
+from .models import Profile, FriendRequest
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django import forms
-from .models import Card
-
+from .utils import open_pack
 from django.contrib.auth.decorators import user_passes_test
 from .forms import CardForm
+from .models import Card, CollectionCard, Collection
 # Create your views here.
 
 def home(request):
@@ -101,10 +102,6 @@ def como_jugar(request):
 def card(request):
     return render(request,'card.html')
 
-def cards(request):
-    cartas = Card.objects.all().select_related('rarity', 'card_set')
-    return render(request, 'cards.html', {'cartas': cartas})
-
 def api_cartas(request):
     cartas = Card.objects.select_related('rarity')
     data = [{
@@ -116,7 +113,25 @@ def api_cartas(request):
         'tipo': carta.rarity.title
     } for carta in cartas]
     return JsonResponse(data, safe=False)
+@login_required
+def user_cards_api(request):
+    user = request.user
+    user_cards = CollectionCard.objects.filter(collection__user=user)
 
+    data = [
+        {
+            'nombre': cc.card.title,
+            'texto': cc.card.description,
+            'imagen': cc.card.image_url,
+            'tipo': cc.card.card_set.title,
+            'rareza': cc.card.rarity.title if hasattr(cc.card, 'rarity') else '',
+            'coste': cc.card.id,  # Si tienes coste en el modelo, ponlo aquí
+            'poder': cc.quantity  # O alguna otra propiedad
+        }
+        for cc in user_cards
+    ]
+
+    return JsonResponse(data, safe=False)
 # Asegúrate de que solo los administradores puedan acceder
 def is_admin(user):
     return user.is_staff
@@ -133,3 +148,69 @@ def add_card(request):
         form = CardForm()
 
     return render(request, 'add_card.html', {'form': form})
+
+@login_required
+def friends_list(request):
+    profile = request.user.profile
+    query = request.GET.get('q')
+    search_results = []
+
+    if query:
+        search_results = User.objects.filter(
+            Q(username__icontains=query)
+        ).exclude(id=request.user.id)
+
+    context = {
+        'friends': profile.friends.all(),
+        'search_results': search_results,
+        'query': query,
+    }
+    return render(request, 'friends/friends_list.html', context)
+
+@login_required
+def remove_friend(request, user_id):
+    old_friend = get_object_or_404(User, id=user_id)
+    request.user.profile.friends.remove(old_friend.profile)
+    return redirect('friends_list')
+
+@login_required
+def send_friend_request(request, user_id):
+    to_user = get_object_or_404(User, id=user_id)
+    FriendRequest.objects.get_or_create(from_user=request.user, to_user=to_user)
+    return redirect('friends_list')
+
+@login_required
+def accept_friend_request(request, request_id):
+    friend_request = get_object_or_404(FriendRequest, id=request_id, to_user=request.user)
+    from_profile = friend_request.from_user.profile
+    to_profile = request.user.profile
+
+    from_profile.friends.add(to_profile)
+    friend_request.delete()
+    return redirect('friends_list')
+
+@login_required
+def reject_friend_request(request, request_id):
+    friend_request = get_object_or_404(FriendRequest, id=request_id, to_user=request.user)
+    friend_request.delete()
+    return redirect('friends_list')
+
+@login_required
+def open_pack_view(request):
+    if request.method == 'POST':
+        cards = open_pack(request.user)
+        return render(request, 'pack_opened.html', {'cards': cards})
+    return render(request, 'open_pack.html')
+
+def coleccion_view(request):
+    if request.user.is_authenticated:
+        try:
+            collection = Collection.objects.get(user=request.user)
+            collection_cards = CollectionCard.objects.filter(collection=collection).select_related('card')
+            cartas = [cc.card for cc in collection_cards]
+        except Collection.DoesNotExist:
+            cartas = []
+    else:
+        cartas = Card.objects.all()
+
+    return render(request, 'coleccion.html', {'cartas': cartas})
