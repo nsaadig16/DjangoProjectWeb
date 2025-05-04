@@ -42,13 +42,30 @@ class CollectionCard(models.Model):
     def __str__(self):
         return f"{self.quantity} x {self.card.title} in {self.collection}"
 
-
-
-
-
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_image = models.ImageField(upload_to='profile_pics', blank=True, null=True)
+    friends = models.ManyToManyField("self", symmetrical=True, blank=True)
 
     def __str__(self):
         return f'{self.user.username} Profile'
+
+class FriendRequest(models.Model):
+    from_user = models.ForeignKey(User, related_name='sent_requests', on_delete=models.CASCADE)
+    to_user = models.ForeignKey(User, related_name='received_requests', on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('from_user', 'to_user')
+
+
+@receiver(post_save, sender=User)
+def create_user_profile_and_collection(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+        Collection.objects.create(user=instance)
+
+# Receiver para actualizar el perfil cuando se guarda el User
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()

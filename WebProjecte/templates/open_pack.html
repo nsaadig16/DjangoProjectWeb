@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Abrir Sobre{% endblock %}
+
+{% block content %}
+<div class="text-center">
+    <h1>¡Abrir un Sobre!</h1>
+    <form method="post">
+        {% csrf_token %}
+        <button class="btn btn-primary btn-lg">Abrir sobre (5 cartas)</button>
+    </form>
+</div>
+{% endblock %}
