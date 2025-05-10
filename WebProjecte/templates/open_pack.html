@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
-{% block title %}Abrir Sobre{% endblock %}
+{% block title %}Open Pack{% endblock %}
 
 {% block content %}
 <div class="text-center">
-    <h1>¡Abrir un Sobre!</h1>
+    <h1>Open a Pack!</h1>
     <form method="post">
         {% csrf_token %}
-        <button class="btn btn-primary btn-lg">Abrir sobre (5 cartas)</button>
+        <button class="btn btn-primary btn-lg">Open pack (5 cards)</button>
     </form>
 </div>
 {% endblock %}

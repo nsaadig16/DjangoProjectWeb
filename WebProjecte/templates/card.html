@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 
   <meta charset="UTF-8">
-  <title>Carta Giratoria</title>
+  <title>Rotating Card</title>
     {% load static %}
   <link rel="stylesheet" href="{% static 'card.css' %}">
 </head>
@@ -12,22 +11,22 @@
 
 <div class="scene" onclick="document.querySelector('.card').classList.toggle('is-flipped');">
   <div class="card">
-    <!-- Frente -->
+    <!-- Front -->
     <div class="card-face card-front">
       <div class="mana-cost">4</div>
       <div class="card-header">Gimeno</div>
-      <img class="card-image" src="https://www.eps.udl.cat/export/sites/Eps/Gimeno.jpg" alt="Imagen de carta">
+      <img class="card-image" src="https://www.eps.udl.cat/export/sites/Eps/Gimeno.jpg" alt="Card image">
       <div class="card-type">Legendary Creature – Human</div>
       <div class="card-text">
-        Devuelve tus cartas de cuarto curso a primer curso.
+        Return your fourth-year cards to first year.
       </div>
       <div class="card-power">3/5</div>
     </div>
 
-    <!-- Reverso -->
+    <!-- Back -->
     <div class="card-face card-back">
-      <h2>EcoEdición Legendaria</h2>
-      <p>Forjada en los hornos de la informática, con alma de patata y corazón de compilador.</p>
+      <h2>Legendary EcoEdition</h2>
+      <p>Forged in the furnaces of computer science, with a potato soul and a compiler's heart.</p>
     </div>
   </div>
 </div>

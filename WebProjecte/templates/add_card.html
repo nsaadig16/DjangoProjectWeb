@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Añadir Carta{% endblock %}
+{% block title %}Add Card{% endblock %}
 
 {% block content %}
     <head>
@@ -9,18 +9,18 @@
         <title></title>
     </head>
 <div class="container">
-    <h2>Añadir Carta</h2>
+    <h2>Add Card</h2>
     {% if user.is_staff %}
     <form method="post">
         {% csrf_token %}
         <div class="form-group">
             {{ form.as_p }}
         </div>
-        <button type="submit">Guardar</button>
+        <button type="submit">Save</button>
     </form>
     {% else %}
     <p class="no-permissions">
-        No tienes permisos para añadir cartas.
+        You do not have permissions to add cards.
     </p>
     {% endif %}
 </div>
