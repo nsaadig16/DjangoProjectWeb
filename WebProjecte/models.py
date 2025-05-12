@@ -4,6 +4,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from WebProjecte.services.profile_image import generate_avatar
 
 class Collection(models.Model):
     user=models.OneToOneField(User, on_delete=models.CASCADE)
@@ -64,6 +65,7 @@ def create_user_profile_and_collection(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
         Collection.objects.create(user=instance)
+        generate_avatar(instance) # Avatar generation via API
 
 # Receiver para actualizar el perfil cuando se guarda el User
 @receiver(post_save, sender=User)
