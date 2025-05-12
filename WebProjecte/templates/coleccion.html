@@ -9,25 +9,14 @@ Card Collection
 {% endblock %}
 
 {% block content %}
-<div class="search-container">
-  <h1 class="search-title">Collection</h1>
-  <div class="search-form">
-    <input type="text" id="search" class="search-input" placeholder="Search by name...">
-    <select id="typeFilter" class="search-select">
-      <option value="">All types</option>
-      <option value="Human">Human</option>
-      <option value="Beast">Beast</option>
-    </select>
-  </div>
-</div>
+
+<h1>Collection</h1>
 
 <main id="cardContainer" class="card-grid">
   {% for carta in cartas %}
-      <main id="cardContainer" class="card-grid">
+      <div class="card-item">
       <img class="card-image" src="{{ carta.image.url }}" alt="Card image">
-
-</main>
-
+      </div>
 {% endfor %}
 
 </main>

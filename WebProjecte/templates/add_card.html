@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block title %}Add Card{% endblock %}
-
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'add_card.css' %}">
+{% endblock %}
 {% block content %}
     <head>
     {% load static %}
@@ -9,7 +11,6 @@
     </head>
 <div class="container">
     <h2>Add Card</h2>
-    {% if user.is_staff %}
     <form method="post">
         {% csrf_token %}
         <div class="form-group">
@@ -17,10 +18,5 @@
         </div>
         <button type="submit">Save</button>
     </form>
-    {% else %}
-    <p class="no-permissions">
-        You do not have permissions to add cards.
-    </p>
-    {% endif %}
 </div>
 {% endblock %}
