@@ -12,15 +12,18 @@
     <div class="row">
         <div class="col-md-4 profile-image text-center mb-4">
             {% if profile.profile_image %}
-                <img src="{{ profile.profile_image.url }}" alt="Imagen de perfil" class="img-thumbnail profile-pic">
+                <img src="{{ profile.profile_image.url }}" alt="Imagen de perfil" class="img-thumbnail profile-pic" id="profile-preview">
             {% else %}
-                <img src="{% static 'default.jpg' %}" alt="Imagen de perfil" class="img-thumbnail profile-pic">
+                <img src="{% static 'default.jpg' %}" alt="Imagen de perfil" class="img-thumbnail profile-pic" id="profile-preview">
             {% endif %}
+            <button type="button" id="random-avatar-btn" class="btn btn-info mt-3">Generar avatar aleatorio</button>
         </div>
 
         <div class="col-md-8">
             <form method="POST" enctype="multipart/form-data" class="profile-form">
                 {% csrf_token %}
+                
+                <input type="hidden" name="dicebear_url" id="dicebear-url-input">
 
                 <div class="form-group mb-3">
                     <label for="username" class="form-label">Usuario:</label>
@@ -48,13 +51,40 @@
     </div>
 </div>
 
-
-
 <script>
     // Script para mostrar el nombre del archivo seleccionado
     document.getElementById('profile_image').addEventListener('change', function() {
         const fileName = this.files[0]?.name || 'Ningún archivo seleccionado';
         document.getElementById('file-selected').textContent = fileName;
+    });
+
+    // Script para generar un avatar aleatorio
+    document.addEventListener('DOMContentLoaded', function() {
+        const randomAvatarBtn = document.getElementById('random-avatar-btn');
+        const dicebearUrlInput = document.getElementById('dicebear-url-input');
+        const profilePreview = document.getElementById('profile-preview');
+        
+        randomAvatarBtn.addEventListener('click', function() {
+            // Generar un seed aleatorio
+            const seed = Math.random().toString(36).substring(2, 15);
+            
+            // Estilos disponibles: 'adventurer', 'avataaars', 'bottts', 'initials', 'micah', etc.
+            const styles = ['adventurer', 'avataaars', 'bottts', 'fun-emoji', 'pixel-art', 'identicon', 'thumbs'];
+            const style = styles[Math.floor(Math.random() * styles.length)];
+            
+            // Generar URL de DiceBear
+            const dicebearUrl = `https://api.dicebear.com/7.x/${style}/png?seed=${seed}&backgroundColor=b6e3f4`;
+            
+            // Mostrar el avatar en la vista previa
+            profilePreview.src = dicebearUrl;
+            
+            // Guardar la URL en el input oculto
+            dicebearUrlInput.value = dicebearUrl;
+            
+            // Limpiar el campo de subida de archivo
+            document.getElementById('profile_image').value = '';
+            document.getElementById('file-selected').textContent = 'Ningún archivo seleccionado';
+        });
     });
 </script>
 {% endblock %}

@@ -1,6 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import logout as auth_logout, login
 from django.shortcuts import redirect
+
+from WebProjecte.services.profile_image import generate_avatar
 from .forms import CustomUserCreationForm
 from django.db.models import Q
 from .models import Profile, FriendRequest
@@ -13,6 +15,10 @@ from .utils import open_pack
 from django.contrib.auth.decorators import user_passes_test
 from .forms import CardForm
 from .models import Card, CollectionCard, Collection
+import os
+import uuid
+import requests
+from django.core.files.base import ContentFile
 # Create your views here.
 
 def home(request):
@@ -22,6 +28,7 @@ def home(request):
 class ProfileUpdateForm(forms.ModelForm):
     username = forms.CharField(max_length=150, required=False)
     password = forms.CharField(widget=forms.PasswordInput(), required=False)
+    dicebear_url = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     class Meta:
         model = Profile
@@ -60,15 +67,70 @@ def profile_view(request):
             password = form.cleaned_data.get('password')
             if password:
                 user.set_password(password)
+            
+            # Verificar si se subió una nueva imagen de perfil o se usó DiceBear
+            has_new_upload = request.FILES.get('profile_image') is not None
+            dicebear_url = form.cleaned_data.get('dicebear_url')
+            
+            # Manejar actualización de imagen de perfil
+            if has_new_upload or dicebear_url:
+                # Eliminar imagen anterior si existe y no es la predeterminada
+                if profile.profile_image:
+                    try:
+                        image_path = profile.profile_image.path
+                        if os.path.exists(image_path) and 'default.jpg' not in image_path:
+                            os.remove(image_path)
+                    except Exception as e:
+                        messages.error(request, f"Error al eliminar la imagen anterior: {e}")
+                
+                # Nombre consistente para todas las imágenes de perfil
+                profile_filename = f"profilepic_{user.username}.png"
+                
+                # Guardar nueva imagen basada en la fuente
+                if dicebear_url:
+                    # Usar DiceBear tiene prioridad sobre la subida manual
+                    try:
+                        response = requests.get(dicebear_url)
+                        if response.status_code == 200:
+                            # Usar siempre el mismo formato de nombre para todas las imágenes
+                            profile_filename = f"profilepic_{user.username}.png"
+                            profile.profile_image.save(
+                                profile_filename,
+                                ContentFile(response.content),
+                                save=False
+                            )
+                    except Exception as e:
+                        messages.error(request, f"Error al descargar la imagen de perfil: {e}")
+                elif has_new_upload:
+                    # Procesar imagen subida manualmente - usar exactamente el mismo nombre
+                    # para mantener consistencia y evitar tener múltiples archivos
+                    uploaded_image = request.FILES['profile_image']
+                    profile_filename = f"profilepic_{user.username}.png"
+                    profile.profile_image.save(
+                        profile_filename,
+                        uploaded_image,
+                        save=False
+                    )
+                
+                # Limpiar el campo del formulario para evitar guardar dos veces
+                form.cleaned_data['profile_image'] = None
 
             user.save()
-            form.save()
-
+            profile = form.save()
+            
             messages.success(request, 'Tu perfil ha sido actualizado correctamente.')
+            
+            # Si se cambió la contraseña, volver a iniciar sesión
+            if password:
+                return redirect('login')
+                
             return redirect('profile')
+    else:
+        form = ProfileUpdateForm(instance=profile)
 
     context = {
         'profile': profile,
+        'form': form,
     }
     return render(request, 'profile.html', context)
 
@@ -201,6 +263,17 @@ def open_pack_view(request):
         cards = open_pack(request.user)
         return render(request, 'pack_opened.html', {'cards': cards})
     return render(request, 'open_pack.html')
+
+@login_required
+def refresh_avatar(request):
+    if request.method == 'POST':
+        success = generate_avatar(request.user)
+        if success:
+            messages.success(request, 'Avatar correctly updated.')
+        else:
+            messages.error(request, 'Error updating avatar.')
+        return redirect('profile')
+    return render(request, 'refresh_avatar.html')
 
 def coleccion_view(request):
     if request.user.is_authenticated:

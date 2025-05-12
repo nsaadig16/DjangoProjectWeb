@@ -1,5 +1,2 @@
-/DjangoProjectWeb/__pycache__/
-/WebProjecte/__pycache__/
-/WebProjecte/migrations/__pycache__/
-/WebProjecte/management/commands/__pycache__/
 **/.env
+**/__pycache__/
