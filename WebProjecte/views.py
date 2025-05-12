@@ -132,12 +132,8 @@ def user_cards_api(request):
     ]
 
     return JsonResponse(data, safe=False)
-# Asegúrate de que solo los administradores puedan acceder
-def is_admin(user):
-    return user.is_staff
 
-
-@user_passes_test(is_admin)
+@login_required()
 def add_card(request):
     if request.method == 'POST':
         form = CardForm(request.POST)
