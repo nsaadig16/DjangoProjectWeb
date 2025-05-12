@@ -23,25 +23,13 @@ Card Collection
 
 <main id="cardContainer" class="card-grid">
   {% for carta in cartas %}
-  <div class="card">
-    <div class="card-header">{{ carta.title }}</div>
-    <img class="card-image" src="{{ carta.image_url }}" alt="Card image">
-    <div class="card-text">{{ carta.description }}</div>
-    <div class="card-rarity">{{ carta.rarity.title }}</div>
-    {% if user.is_authenticated %}
-      {% with collection_card=card.collectioncard_set.first %}
-        <div class="card-quantity">Quantity: {{ collection_card.quantity }}</div>
-      {% endwith %}
-    {% endif %}
-  </div>
-{% endfor %}
+      <main id="cardContainer" class="card-grid">
+      <img class="card-image" src="{{ carta.image.url }}" alt="Card image">
 
 </main>
 
-{% if user.is_authenticated %}
-<script src="{% static 'script_usuario.js' %}"></script>
-{% else %}
-<script src="{% static 'script.js' %}"></script>
-{% endif %}
+{% endfor %}
+
+</main>
 
 {% endblock %}
