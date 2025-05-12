@@ -2,63 +2,63 @@ from django.core.management.base import BaseCommand
 from WebProjecte.models import Card, Rarity, CardSet
 
 class Command(BaseCommand):
-    help = 'Sembrar la base de datos con cartas de ejemplo'
+    help = 'Seed the database with example cards'
 
     def handle(self, *args, **kwargs):
-        # Crear o recuperar rareza
-        rareza, _ = Rarity.objects.get_or_create(
-            title="Legendaria",
+        # Create or retrieve rarity
+        rarity, _ = Rarity.objects.get_or_create(
+            title="Legendary",
             defaults={
-                'description': 'Cartas muy difíciles de conseguir',
+                'description': 'Very hard-to-get cards',
                 'probability': 0.05
             }
         )
 
-        # Crear o recuperar set
-        set_inicial, _ = CardSet.objects.get_or_create(
-            title="Set Inicial",
+        # Create or retrieve card set
+        initial_set, _ = CardSet.objects.get_or_create(
+            title="Unleashed Arcana",
             defaults={
-                'description': 'Primera colección de cartas',
-                'image_url': 'https://example.com/set-inicial.jpg'
+                'description': 'First collection of cards',
+                'image': 'https://example.com/initial-set.jpg'
             }
         )
 
-        # Lista de cartas a añadir
-        cartas = [
+        # List of cards to add
+        cards = [
             {
-                "title": "Gimeno",
-                "description": "Devuelve tus cartas de cuarto curso a primer curso.",
-                "image_url": "https://inkscape.app/wp-content/uploads/imagen-vectorial.webp",
+                "title": "Latra",
+                "description": "Returns your fourth-year cards to the first year.",
+                "image": "https://inkscape.app/wp-content/uploads/imagen-vectorial.webp",
             },
             {
                 "title": "Torres",
-                "description": "Te obliga a reescribir tu TFG cada semana.",
-                "image_url": "https://example.com/torres.jpg",
+                "description": "Forces you to rewrite your thesis every week.",
+                "image": "https://example.com/torres.jpg",
             },
             {
                 "title": "Martínez",
-                "description": "Cuando entra al campo, todos los estudiantes se duermen.",
-                "image_url": "https://example.com/martinez.jpg",
+                "description": "When it enters the field, all students fall asleep.",
+                "image": "https://example.com/martinez.jpg",
             },
             {
-                "title": "Bestia del Lab",
-                "description": "Una criatura legendaria con hambre de proyectos.",
-                "image_url": "https://example.com/bestia.jpg",
+                "title": "Lab Beast",
+                "description": "A legendary creature hungry for projects.",
+                "image": "https://example.com/bestia.jpg",
             }
         ]
 
-        # Crear cartas
-        for carta_data in cartas:
+        # Create cards
+        for card_data in cards:
             card, created = Card.objects.get_or_create(
-                title=carta_data["title"],
+                title=card_data["title"],
                 defaults={
-                    "description": carta_data["description"],
-                    "image_url": carta_data["image_url"],
-                    "rarity": rareza,
-                    "card_set": set_inicial
+                    "description": card_data["description"],
+                    "image": card_data["image"],
+                    "rarity": rarity,
+                    "card_set": initial_set
                 }
             )
             if created:
-                self.stdout.write(self.style.SUCCESS(f"✅ Carta '{card.title}' creada"))
+                self.stdout.write(self.style.SUCCESS(f"✅ Card '{card.title}' created"))
             else:
-                self.stdout.write(self.style.WARNING(f"⚠️ Carta '{card.title}' ya existía"))
+                self.stdout.write(self.style.WARNING(f"⚠️ Card '{card.title}' already exists"))
