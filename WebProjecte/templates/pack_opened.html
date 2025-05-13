@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
-{% block title %}Cartas Obtenidas{% endblock %}
+{% block title %}Obtained Cards{% endblock %}
 
 {% block content %}
 <div class="text-center">
-    <h1>¡Has conseguido estas cartas!</h1>
+    <h1>You have obtained these cards!</h1>
     <div class="row mt-4">
         {% for card in cards %}
             <div class="col-md-4 mb-4">
@@ -17,6 +17,6 @@
             </div>
         {% endfor %}
     </div>
-    <a href="{% url 'open_pack' %}" class="btn btn-secondary mt-3">Abrir otro sobre</a>
+    <a href="{% url 'open_pack' %}" class="btn btn-secondary mt-3">Open another pack</a>
 </div>
 {% endblock %}

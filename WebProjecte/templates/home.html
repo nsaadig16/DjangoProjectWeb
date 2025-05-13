@@ -1,20 +1,19 @@
 {% extends 'base.html' %}
 
-{% block title %}Inicio - TCG{% endblock %}
+{% block title %}Home - TCG{% endblock %}
 
 {% block content %}
 <div class="container text-center mt-5">
     {% if user.is_authenticated %}
-        <h1 class="mb-3">¡Bienvenido, {{ user.username }}!</h1>
-        <p>¿Qué te gustaría leer hoy?</p>
-        <a href="{% url 'logout' %}" class="btn btn-danger mt-3">Cerrar sesión</a>
+        <h1 class="mb-3">Welcome, {{ user.username }}!</h1>
+        <p>What would you like to read today?</p>
+        <a href="{% url 'logout' %}" class="btn btn-danger mt-3">Log out</a>
     {% else %}
-        <h1 class="mb-3">Bienvenido a TCG</h1>
-        <p>Inicia sesión para acceder a nuestro contenido.</p>
+        <h1 class="mb-3">Welcome to TCG</h1>
+        <p>Log in to access our content.</p>
         <div class="mt-4">
-            <a href="{% url 'login' %}" class="btn btn-primary">Iniciar sesión</a>
+            <a href="{% url 'login' %}" class="btn btn-primary">Log in</a>
         </div>
     {% endif %}
 </div>
 {% endblock %}
-
