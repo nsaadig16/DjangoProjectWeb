@@ -2,12 +2,12 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
 from .models import Profile
-from .models import Card
+from .models import UserCard
 
-class CardForm(forms.ModelForm):
+class UserCardForm(forms.ModelForm):
     class Meta:
-        model = Card
-        fields = ['title', 'description', 'image', 'rarity', 'card_set']
+        model = UserCard
+        fields = ['title', 'description', 'image', 'rarity']
 
 class CustomUserCreationForm(UserCreationForm):
     class Meta:

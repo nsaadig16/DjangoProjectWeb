@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from WebProjecte.services.profile_image import generate_avatar
+from django.utils import timezone
 
 class Collection(models.Model):
     user=models.OneToOneField(User, on_delete=models.CASCADE)
@@ -33,7 +34,19 @@ class Card(models.Model):
     card_set=models.ForeignKey(CardSet, on_delete=models.CASCADE)
     def __str__(self):
         return self.title
-    
+
+
+class UserCard(models.Model):
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+    image = models.ImageField(upload_to='user_card_images', default='card_images/default.jpg')
+    rarity = models.ForeignKey(Rarity, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='cards')
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.title
+
 class CollectionCard(models.Model):
     card = models.ForeignKey(Card, on_delete=models.CASCADE)
     collection = models.ForeignKey(Collection, on_delete=models.CASCADE)

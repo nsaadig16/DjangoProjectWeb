@@ -13,7 +13,7 @@ from django.contrib.auth.models import User
 from django import forms
 from .utils import open_pack
 from django.contrib.auth.decorators import user_passes_test
-from .forms import CardForm
+from .forms import UserCardForm
 from .models import Card, CollectionCard, Collection
 import os
 import uuid
@@ -196,12 +196,14 @@ def user_cards_api(request):
 @login_required()
 def add_card(request):
     if request.method == 'POST':
-        form = CardForm(request.POST)
+        form = UserCardForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            return redirect('cards')  # redirigir a la lista de cartas o donde prefieras
+            card = form.save(commit=False)
+            card.user = request.user
+            card.save()
+            return redirect('home')
     else:
-        form = CardForm()
+        form = UserCardForm()
 
     return render(request, 'add_card.html', {'form': form})
 
@@ -267,7 +269,7 @@ def refresh_avatar(request):
         else:
             messages.error(request, 'Error updating avatar.')
         return redirect('profile')
-    return render(request, 'refresh_avatar.html')
+    return render(request, 'profile.html')
 
 def coleccion_view(request):
     if request.user.is_authenticated:
