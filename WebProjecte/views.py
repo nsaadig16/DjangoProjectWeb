@@ -168,7 +168,7 @@ def api_cartas(request):
     cartas = Card.objects.select_related('rarity')
     data = [{
         'nombre': carta.title,
-        'imagen': carta.image_url,
+        'imagen': carta.image.url,
         'texto': carta.description,
         'poder': getattr(carta, 'poder', '?'),
         'coste': getattr(carta, 'coste', 0),
@@ -184,22 +184,16 @@ def user_cards_api(request):
         {
             'nombre': cc.card.title,
             'texto': cc.card.description,
-            'imagen': cc.card.image_url,
+            'imagen': cc.card.image.url,
             'tipo': cc.card.card_set.title,
             'rareza': cc.card.rarity.title if hasattr(cc.card, 'rarity') else '',
-            'coste': cc.card.id,  # Si tienes coste en el modelo, ponlo aquí
-            'poder': cc.quantity  # O alguna otra propiedad
         }
         for cc in user_cards
     ]
 
     return JsonResponse(data, safe=False)
-# Asegúrate de que solo los administradores puedan acceder
-def is_admin(user):
-    return user.is_staff
 
-
-@user_passes_test(is_admin)
+@login_required()
 def add_card(request):
     if request.method == 'POST':
         form = CardForm(request.POST)

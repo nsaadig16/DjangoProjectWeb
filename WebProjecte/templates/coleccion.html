@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}
-Colección de Cartas
+Card Collection
 {% endblock %}
 
 {% block extra_css %}
@@ -9,39 +9,16 @@ Colección de Cartas
 {% endblock %}
 
 {% block content %}
-<div class="search-container">
-  <h1 class="search-title">Colección</h1>
-  <div class="search-form">
-    <input type="text" id="search" class="search-input" placeholder="Buscar por nombre...">
-    <select id="typeFilter" class="search-select">
-      <option value="">Todos los tipos</option>
-      <option value="Human">Human</option>
-      <option value="Beast">Beast</option>
-    </select>
-  </div>
-</div>
+
+<h1>Collection</h1>
 
 <main id="cardContainer" class="card-grid">
   {% for carta in cartas %}
-  <div class="card">
-    <div class="card-header">{{ carta.title }}</div>
-    <img class="card-image" src="{{ carta.image_url }}" alt="Imagen de carta">
-    <div class="card-text">{{ carta.description }}</div>
-    <div class="card-rarity">{{ carta.rarity.title }}</div>
-    {% if user.is_authenticated %}
-      {% with collection_card=card.collectioncard_set.first %}
-        <div class="card-quantity">Cantidad: {{ collection_card.quantity }}</div>
-      {% endwith %}
-    {% endif %}
-  </div>
+      <div class="card-item">
+      <img class="card-image" src="{{ carta.image.url }}" alt="Card image">
+      </div>
 {% endfor %}
 
 </main>
-
-{% if user.is_authenticated %}
-<script src="{% static 'script_usuario.js' %}"></script>
-{% else %}
-<script src="{% static 'script.js' %}"></script>
-{% endif %}
 
 {% endblock %}

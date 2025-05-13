@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en"></html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,10 +7,10 @@
     {% load static %}
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <!-- Enlace al archivo CSS -->
+    <!-- Link to CSS file -->
     <link rel="stylesheet" href="{% static 'style.css' %}">
     {% block extra_css %}{% endblock %}
-    <!-- Opcional: Agregar Bootstrap para mejorar estilos -->
+    <!-- Optional: Add Bootstrap for better styles -->
 
 </head>
 <body>
@@ -30,37 +30,37 @@
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     {% if user.profile.profile_image %}
-                                        <img src="{{ user.profile.profile_image.url }}" alt="Imagen de perfil" class="rounded-circle" width="30" height="30" style="object-fit: cover; margin-right: 12px;">
+                                        <img src="{{ user.profile.profile_image.url }}" alt="Profile Image" class="rounded-circle" width="30" height="30" style="object-fit: cover; margin-right: 12px;">
                                     {% else %}
-                                        <img src="{% static 'default.jpg' %}" alt="Imagen de perfil" class="rounded-circle" width="30" height="30" style="object-fit: cover; margin-right: 12px;">
+                                        <img src="{% static 'default.jpg' %}" alt="Profile Image" class="rounded-circle" width="30" height="30" style="object-fit: cover; margin-right: 12px;">
                                     {% endif %}
                                     {{ user.username }}
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li><a class="dropdown-item" href="{% url 'profile' %}">Perfil</a></li>
-                                    <li><a class="dropdown-item" href="{% url 'como_jugar' %}">Como Jugar</a></li>
-                                    <li><a class="dropdown-item" href="{% url 'coleccion' %}">Coleccion</a></li>
-                                    <li><a class="dropdown-item" href="{% url 'friends_list' %}">Amigos</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'como_jugar' %}">How to Play</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'coleccion' %}">Collection</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'friends_list' %}">Friends</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li>
                                         <button id="toggle-theme" class="dropdown-item btn">
-                                            Modo Oscuro
+                                            Dark Mode
                                         </button>
                                     </li>
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a href="{% url 'logout' %}" class="dropdown-item text-danger">Cerrar sesión</a></li>
+                                    <li><a href="{% url 'logout' %}" class="dropdown-item text-danger">Log Out</a></li>
                                 </ul>
                             </li>
 
                         {% else %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'home' %}">Inicio</a>
+                                <a class="nav-link" href="{% url 'home' %}">Home</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'como_jugar' %}">Como Jugar</a>
+                                <a class="nav-link" href="{% url 'como_jugar' %}">How to Play</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'login' %}">Iniciar sesión</a>
+                                <a class="nav-link" href="{% url 'login' %}">Log In</a>
                             </li>
                         {% endif %}
                     </ul>
@@ -75,32 +75,32 @@
     </main>
 
     <footer class="text-center mt-5 py-3 bg-light">
-        <p>Gracias por visitar TCG.</p>
+        <p>Thank you for visiting TCG.</p>
     </footer>
 
-    <!-- Opcional: Agregar Bootstrap JS para funcionalidad extra -->
+    <!-- Optional: Add Bootstrap JS for extra functionality -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
         const toggleButton = document.getElementById("toggle-theme");
         const body = document.body;
 
-        // Comprobar si el usuario ya ha activado el modo oscuro antes
+        // Check if the user has already enabled dark mode
         if (localStorage.getItem("theme") === "dark") {
             body.classList.add("dark-mode");
-            toggleButton.textContent = "Modo Claro";
+            toggleButton.textContent = "Light Mode";
         }
 
         toggleButton.addEventListener("click", function () {
             body.classList.toggle("dark-mode");
 
-            // Guardar la preferencia en el almacenamiento local
+            // Save preference in local storage
             if (body.classList.contains("dark-mode")) {
                 localStorage.setItem("theme", "dark");
-                toggleButton.textContent = "Modo Claro";
+                toggleButton.textContent = "Light Mode";
             } else {
                 localStorage.setItem("theme", "light");
-                toggleButton.textContent = "Modo Oscuro";
+                toggleButton.textContent = "Dark Mode";
             }
         });
     });
