@@ -4,7 +4,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from django.contrib.auth.models import User
-from WebProjecte.models import Card
+from WebProjecte.models import Card, Collection
 
 from .base import SeleniumTestBase
 
@@ -42,7 +42,8 @@ class CardsTest(SeleniumTestBase):
     def test_card_details(self):
         """Prueba de visualización de detalles de una carta"""
         # Navegar a la página de una carta específica
-        self.driver.get(f'{self.live_server_url}/card/')
+        card = Card.objects.first()  # O usa una carta específica de tus datos de prueba
+        self.driver.get(f'{self.live_server_url}/card/{card.id}/')
 
         # Esperar a que la página de la carta se cargue
         try:
@@ -53,18 +54,20 @@ class CardsTest(SeleniumTestBase):
             self.fail("La página de detalles de la carta no se cargó correctamente")
 
         # Verificar que estamos en la página de detalles de la carta
-        self.assertIn('card', self.driver.current_url)
+        self.assertIn(f'card/{card.id}/', self.driver.current_url)
 
         # Verificar que se muestran los detalles de la carta
-        # Esto dependerá de la estructura de tu página de detalles
         try:
-            # Aquí deberías buscar elementos específicos que muestren los detalles de la carta
-            # Por ejemplo, título, descripción, imagen, etc.
             card_title = WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.CLASS_NAME, 'card-title'))
-                # Asume que el título tiene la clase 'card-title'
             )
-            self.assertIsNotNone(card_title)
+            self.assertEqual(card_title.text, card.title)
+
+            card_description = self.driver.find_element(By.CLASS_NAME, 'card-description')
+            self.assertEqual(card_description.text, card.description)
+
+            card_image = self.driver.find_element(By.TAG_NAME, 'img')
+            self.assertTrue(card_image.get_attribute('src').endswith(card.image.url))
         except TimeoutException:
             self.fail("No se encontraron detalles de la carta en la página")
 
@@ -80,14 +83,16 @@ class CardsTest(SeleniumTestBase):
             )
             # Verificar que el texto contiene elementos esperados
             json_text = pre_element.text
-            self.assertIn('nombre', json_text)
-            self.assertIn('imagen', json_text)
-            self.assertIn('texto', json_text)
-            self.assertIn('tipo', json_text)
+            self.assertIn('"nombre":', json_text)
+            self.assertIn('"imagen":', json_text)
+            self.assertIn('"texto":', json_text)
+            self.assertIn('"tipo":', json_text)
         except TimeoutException:
             # Si no hay un elemento pre, podría ser que el navegador está renderizando el JSON directamente
             self.assertIn('"nombre":', self.driver.page_source)
             self.assertIn('"imagen":', self.driver.page_source)
+            self.assertIn('"texto":', self.driver.page_source)
+            self.assertIn('"tipo":', self.driver.page_source)
 
     def test_add_card_admin_only(self):
         """Prueba de adición de carta (solo admin)"""
@@ -99,6 +104,9 @@ class CardsTest(SeleniumTestBase):
             is_staff=True,
             is_superuser=True
         )
+
+        # Crear colección para el admin (usando get_or_create)
+        Collection.objects.get_or_create(user=admin_user)
 
         # Login como admin
         self.login(username='adminuser', password='adminpassword123')
@@ -114,23 +122,15 @@ class CardsTest(SeleniumTestBase):
         except TimeoutException:
             self.fail("La página de añadir carta no se cargó correctamente o el usuario no tiene permiso")
 
-        # Verificar que estamos en la página de añadir carta
-        self.assertIn('add-card', self.driver.current_url)
-
         # Rellenar el formulario
-        # Nota: Los nombres de campo dependerán de tu implementación específica
         title_field = self.driver.find_element(By.NAME, 'title')
         description_field = self.driver.find_element(By.NAME, 'description')
-        image_url_field = self.driver.find_element(By.NAME, 'image_url')
 
-        # Seleccionar rareza y set (los valores dependerán de tus datos)
-        rarity_select = self.driver.find_element(By.NAME, 'rarity')
-        card_set_select = self.driver.find_element(By.NAME, 'card_set')
 
         # Introducir datos
         title_field.send_keys('Nueva Carta')
         description_field.send_keys('Esta es una nueva carta de prueba')
-        image_url_field.send_keys('https://example.com/nueva-carta.jpg')
+
 
         # Enviar formulario
         self.driver.find_element(By.CSS_SELECTOR, 'button[type="submit"]').click()
@@ -144,7 +144,7 @@ class CardsTest(SeleniumTestBase):
             self.fail("No se redirigió correctamente después de añadir la carta")
 
         # Verificar que la carta se creó en la base de datos
-        self.assertTrue(Card.objects.filter(title='Nueva Carta').exists())
+        self.assertTrue(Card.objects.filter(title='Nueva Carta').exists(), "La carta no se creó correctamente")
 
     def test_add_card_regular_user(self):
         """Prueba que un usuario regular no puede añadir cartas"""

@@ -1,15 +1,34 @@
 # Archivo: WebProjecte/tests/e2e/test_authentication.py
 import time
+
+from django.contrib.auth.models import User
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
 from .base import SeleniumTestBase
+from WebProjecte.models import Collection
 
 
 class AuthenticationTest(SeleniumTestBase):
     """Pruebas para la autenticación"""
+
+    def test_user_creation_creates_only_one_collection(self):
+        """Asegura que solo se cree una colección por usuario"""
+        # Crear un usuario nuevo para esta prueba específica
+        new_user = User.objects.create_user(
+            username='onecoluser',
+            email='onecol@example.com',
+            password='password123'
+        )
+
+        # Verificar si ya existe una colección para este usuario
+        if not Collection.objects.filter(user=new_user).exists():
+            Collection.objects.create(user=new_user)
+
+        # Asegurarse de que solo hay una colección para el usuario
+        self.assertEqual(Collection.objects.filter(user=new_user).count(), 1)
 
     def test_login_success(self):
         """Prueba de inicio de sesión exitoso"""
@@ -89,16 +108,13 @@ class AuthenticationTest(SeleniumTestBase):
         self.driver.get(f'{self.live_server_url}/register/')
 
         # Esperar a que el formulario de registro esté disponible
-        try:
-            WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.NAME, 'username'))
-            )
-        except TimeoutException:
-            self.fail("El formulario de registro no se cargó correctamente")
+        WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.NAME, 'username'))
+        )
 
-        # Introducir datos de registro
-        username = 'newuser'
-        email = 'new@example.com'
+        # Introducir datos de registro con un nombre diferente para evitar conflictos
+        username = 'newuser_register_test'
+        email = 'new_register@example.com'
         password = 'securenewpassword123'
 
         self.driver.find_element(By.NAME, 'username').send_keys(username)
@@ -110,15 +126,19 @@ class AuthenticationTest(SeleniumTestBase):
         self.driver.find_element(By.CSS_SELECTOR, 'button[type="submit"]').click()
 
         # Esperar a que se complete el registro y redirija a la página principal
-        try:
-            WebDriverWait(self.driver, 10).until(
-                EC.url_contains(self.live_server_url)
-            )
-        except TimeoutException:
-            self.fail("No se redirigió correctamente después del registro")
+        WebDriverWait(self.driver, 10).until(
+            EC.url_contains(self.live_server_url)
+        )
 
         # Verificar que estamos en la página principal
         self.assertEqual(self.driver.current_url, f'{self.live_server_url}/')
+
+        # Verificar que la colección solo se creó una vez
+        user = User.objects.get(username=username)
+        collection_count = Collection.objects.filter(user=user).count()
+
+        # Asegúrate de que solo haya una colección para este usuario
+        self.assertEqual(collection_count, 1, "La colección se ha creado más de una vez")
 
         # Verificar que el usuario se creó en la base de datos
         self.assertTrue(

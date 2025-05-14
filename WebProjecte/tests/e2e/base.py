@@ -1,15 +1,22 @@
-# Archivo: WebProjecte/tests/e2e/base.py
 import os
 import time
+import geckodriver_autoinstaller
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.contrib.auth.models import User
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from WebProjecte.models import Card, Rarity, CardSet, Profile, Collection
+
+from django.core.management import call_command
+
+
+def setUp(self):
+    """Limpiar la base de datos antes de cada prueba y crear datos de prueba"""
+    call_command('flush', interactive=False)
+    self.create_test_data()
 
 
 class SeleniumTestBase(StaticLiveServerTestCase):
@@ -18,17 +25,21 @@ class SeleniumTestBase(StaticLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        # Configurar opciones de Chrome para headless (sin interfaz gráfica)
-        chrome_options = Options()
-        chrome_options.add_argument("--headless")
-        chrome_options.add_argument("--no-sandbox")
-        chrome_options.add_argument("--disable-dev-shm-usage")
+        # Instalar automáticamente geckodriver si no está presente
+        geckodriver_autoinstaller.install()
 
-        # Inicializar el WebDriver
-        cls.driver = webdriver.Chrome(
-            service=Service(ChromeDriverManager().install()),
-            options=chrome_options
+        # Configurar opciones de Firefox para headless (sin interfaz gráfica)
+        firefox_options = Options()
+        firefox_options.add_argument("--headless")  # Ejecutar en modo sin cabeza (headless)
+        firefox_options.add_argument("--no-sandbox")  # Evitar problemas en entornos Linux
+        firefox_options.add_argument("--disable-dev-shm-usage")  # Evitar errores relacionados con memoria compartida
+
+        # Inicializar el WebDriver con Firefox (geckodriver)
+        cls.driver = webdriver.Firefox(
+            service=Service(geckodriver_autoinstaller.install()),  # Usar geckodriver autoinstaller
+            options=firefox_options
         )
+
         # Maximizar la ventana
         cls.driver.maximize_window()
 
@@ -49,11 +60,15 @@ class SeleniumTestBase(StaticLiveServerTestCase):
             email='test@example.com',
             password='securepassword123'
         )
-        # Crear perfil para el usuario de prueba
-        self.test_profile = Profile.objects.create(user=self.test_user)
 
-        # Crear colección para el usuario de prueba
-        self.test_collection = Collection.objects.create(user=self.test_user)
+        # Crear colección con get_or_create para evitar duplicados
+        self.test_collection, created = Collection.objects.get_or_create(user=self.test_user)
+
+        # Verificar si la colección fue creada o no
+        if created:
+            print(f"Se creó la colección para {self.test_user.username}")
+        else:
+            print(f"La colección ya existía para {self.test_user.username}")
 
         # Crear rareza
         self.test_rarity = Rarity.objects.create(
@@ -66,14 +81,14 @@ class SeleniumTestBase(StaticLiveServerTestCase):
         self.test_card_set = CardSet.objects.create(
             title='Base Set',
             description='The base set of cards',
-            image_url='https://example.com/base-set.jpg'
+
         )
 
         # Crear carta de prueba
         self.test_card = Card.objects.create(
             title='Test Card',
             description='This is a test card',
-            image_url='https://example.com/test-card.jpg',
+
             rarity=self.test_rarity,
             card_set=self.test_card_set
         )
