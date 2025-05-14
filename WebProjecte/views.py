@@ -170,8 +170,6 @@ def api_cartas(request):
         'nombre': carta.title,
         'imagen': carta.image.url,
         'texto': carta.description,
-        'poder': getattr(carta, 'poder', '?'),
-        'coste': getattr(carta, 'coste', 0),
         'tipo': carta.rarity.title
     } for carta in cartas]
     return JsonResponse(data, safe=False)
@@ -272,14 +270,20 @@ def refresh_avatar(request):
     return render(request, 'profile.html')
 
 def coleccion_view(request):
-    if request.user.is_authenticated:
-        try:
-            collection = Collection.objects.get(user=request.user)
-            collection_cards = CollectionCard.objects.filter(collection=collection).select_related('card')
-            cartas = [cc.card for cc in collection_cards]
-        except Collection.DoesNotExist:
-            cartas = []
-    else:
-        cartas = Card.objects.all()
+    collection = Collection.objects.get(user=request.user)
+
+
+    cartas_usuario_ids = set(
+        CollectionCard.objects.filter(collection=collection).values_list('card_id', flat=True)
+    )
+
+    cartas = []
+    for carta in Card.objects.all().order_by('id'):
+        cartas.append({
+            'id': carta.id,
+            'nombre': carta.title,
+            'image': carta.image,
+            'tiene': carta.id in cartas_usuario_ids
+        })
 
     return render(request, 'coleccion.html', {'cartas': cartas})
