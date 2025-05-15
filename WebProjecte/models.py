@@ -1,4 +1,3 @@
-# Create your models here.
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -23,9 +22,10 @@ class Rarity(models.Model):
 
 
 class CardSet(models.Model):
-    title=models.CharField(max_length=100)
-    description=models.TextField()
-    image = models.ImageField(upload_to='card_sets')
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+    image = models.ImageField(upload_to='card_sets', blank=True, null=True)  # <-- Cambiado
+
     def __str__(self):
         return self.title
 
@@ -33,12 +33,18 @@ class CardSet(models.Model):
 class Card(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
-    image = models.ImageField(upload_to='card_images')
+    image = models.ImageField(upload_to='card_images', blank=True, null=True)  # <-- Cambiado
     rarity = models.ForeignKey(Rarity, on_delete=models.CASCADE)
     card_set = models.ForeignKey(CardSet, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
+
+    @property
+    def image_url(self):
+        if self.image and hasattr(self.image, 'url'):
+            return self.image.url
+        return None
 
 
 class CollectionCard(models.Model):
@@ -79,7 +85,6 @@ def create_user_profile_and_collection(sender, instance, created, **kwargs):
         generate_avatar(instance)  # Avatar generation via API
 
 
-# Receiver para actualizar el perfil cuando se guarda el User
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
