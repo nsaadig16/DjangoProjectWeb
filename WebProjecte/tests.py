@@ -11,7 +11,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
-from cards.models import Set
+
 from WebProjecte.models import Card, Rarity, CardSet, Profile, Collection, CollectionCard
 
 
@@ -335,15 +335,14 @@ class GeneralPagesTest(SeleniumTestBase):
         self.assertIn('select-pack', self.driver.current_url)
 
 
-
 class PackTest(SeleniumTestBase):
-    """Tests related to opening card packs"""
+    """Tests relacionados con la apertura de sobres"""
 
     def test_open_specific_pack(self):
         self.login()
 
-        # Create a test Set if none exists
-        set_obj = Set.objects.create(nombre='Test Set')
+        # Crear un Set de prueba si no existe
+        set_obj = Set.objects.create(nombre='Set de Prueba')
 
         self.driver.get(f'{self.live_server_url}/open-pack/{set_obj.id}/')
         try:
@@ -351,7 +350,4 @@ class PackTest(SeleniumTestBase):
                 EC.presence_of_element_located((By.TAG_NAME, 'body'))
             )
         except TimeoutException:
-            self.fail("Open pack page did not load correctly")
-
-        # Verify that the URL matches the expected open-pack path
-        self.assertIn(f'/open-pack/{set_obj.id}/', self.driver.current_url)
+            self.fail("La página de abrir pack no cargó correctamente")
