@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Select a Pack{% endblock %}
+
+{% block content %}
+<h1 class="text-center">Select a Pack to Open</h1>
+<div class="card-grid">
+  {% for set in card_sets %}
+    <a href="{% url 'open_pack' set.id %}" class="card-item">
+      <img class="card-image" src="{{ set.image.url }}" alt="{{ set.title }}" style="width: 220px; height: auto; cursor: pointer;">
+    </a>
+  {% endfor %}
+</div>
+{% endblock %}

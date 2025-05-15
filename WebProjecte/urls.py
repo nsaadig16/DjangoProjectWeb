@@ -22,5 +22,6 @@ urlpatterns = [
     path('friends/send_request/<int:user_id>/', views.send_friend_request, name='send_friend_request'),
     path('friends/accept/<int:request_id>/', views.accept_friend_request, name='accept_friend_request'),
     path('friends/reject/<int:request_id>/', views.reject_friend_request, name='reject_friend_request'),
-    path('pack/open/', views.open_pack_view, name='open_pack'),
+    path('select-pack/', views.pack_selector_view, name='select_pack'),
+    path('open-pack/<int:set_id>/', views.open_pack_view, name='open_pack'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
