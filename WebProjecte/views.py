@@ -162,9 +162,6 @@ def register(request):
 def como_jugar(request):
     return render(request, 'como_jugar.html')
 
-def card(request):
-    return render(request,'card.html')
-
 def api_cartas(request):
     cartas = Card.objects.select_related('rarity')
     data = [{

@@ -124,10 +124,6 @@ class AuthenticationTest(SeleniumTestBase):
 class CardsTest(SeleniumTestBase):
     """Card views and API"""
 
-    def test_card_page_loads(self):
-        self.driver.get(f'{self.live_server_url}/card/')
-        self.assertIn('card', self.driver.current_url)
-
     def test_api_cartas(self):
         self.driver.get(f'{self.live_server_url}/api/cartas/')
         body = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, 'body')))

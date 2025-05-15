@@ -11,7 +11,6 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('register/', views.register, name='register'),
     path('como-jugar/', views.como_jugar, name='como_jugar'),
-    path('card/', views.card, name='card'),
     path('profile/', views.profile_view, name='profile'),
     path('coleccion/', views.coleccion_view, name='coleccion'),
     path('api/cartas/', views.api_cartas, name='api_cartas'),
