@@ -1,55 +1,55 @@
 {% extends 'base.html' %}
-{% block title %}Amigos{% endblock %}
+{% block title %}Friends{% endblock %}
 
 {% block content %}
 <div class="container">
-    <h1>Amigos de {{ request.user.username }}</h1>
+    <h1>Friends</h1>
 
-    <h2>Mis amigos:</h2>
+    <h2>My friends:</h2>
         <ul class="list-group mb-4">
             {% for friend in request.user.profile.friends.all %}
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     {{ friend.user.username }}
-                    <a href="{% url 'remove_friend' friend.user.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                    <a href="{% url 'remove_friend' friend.user.id %}" class="btn btn-danger btn-sm">Remove</a>
                 </li>
             {% empty %}
-                <li class="list-group-item">No tienes amigos aún 😢</li>
+                <li class="list-group-item">You have no friends yet 😢</li>
             {% endfor %}
         </ul>
 
-    <h2>Solicitudes recibidas:</h2>
+    <h2>Received requests:</h2>
     <ul class="list-group mb-4">
         {% for fr in request.user.received_requests.all %}
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 {{ fr.from_user.username }}
                 <div>
-                    <a href="{% url 'accept_friend_request' fr.id %}" class="btn btn-success btn-sm">Aceptar</a>
-                    <a href="{% url 'reject_friend_request' fr.id %}" class="btn btn-danger btn-sm">Rechazar</a>
+                    <a href="{% url 'accept_friend_request' fr.id %}" class="btn btn-success btn-sm">Accept</a>
+                    <a href="{% url 'reject_friend_request' fr.id %}" class="btn btn-danger btn-sm">Reject</a>
                 </div>
             </li>
         {% empty %}
-            <li class="list-group-item">No tienes solicitudes pendientes.</li>
+            <li class="list-group-item">You have no pending requests.</li>
         {% endfor %}
     </ul>
 
-    <h2>Buscar usuarios:</h2>
+    <h2>Search users:</h2>
     <form method="GET" class="input-group mb-3">
-        <input type="text" name="q" class="form-control" placeholder="Buscar usuario..." value="{{ query }}">
-        <button type="submit" class="btn btn-primary">Buscar</button>
+        <input type="text" name="q" class="form-control" placeholder="Search user..." value="{{ query }}">
+        <button type="submit" class="btn btn-primary">Search</button>
     </form>
 
     {% if query %}
-        <h3>Resultados para "{{ query }}":</h3>
+        <h3>Results for "{{ query }}":</h3>
         <ul class="list-group">
             {% for user in search_results %}
                 {% if user.profile not in request.user.profile.friends.all and user != request.user %}
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         {{ user.username }}
-                        <a href="{% url 'send_friend_request' user.id %}" class="btn btn-info btn-sm">Enviar solicitud</a>
+                        <a href="{% url 'send_friend_request' user.id %}" class="btn btn-info btn-sm">Send request</a>
                     </li>
                 {% endif %}
             {% empty %}
-                <li class="list-group-item">No se encontraron usuarios.</li>
+                <li class="list-group-item">No users found.</li>
             {% endfor %}
         </ul>
     {% endif %}
