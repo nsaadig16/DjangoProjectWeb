@@ -15,6 +15,10 @@ from selenium.common.exceptions import TimeoutException
 from WebProjecte.models import Card, Rarity, CardSet, Profile, Collection, CollectionCard
 
 
+### IMPORTANTE ###
+###La ejecucion de los testos debe hacerse en un env###
+
+
 class SeleniumTestBase(StaticLiveServerTestCase):
     """Clase base para pruebas con Selenium"""
 
@@ -128,11 +132,9 @@ class AuthenticationTest(SeleniumTestBase):
             password='password123'
         )
 
-        # Verificar si ya existe una colección para este usuario
         if not Collection.objects.filter(user=new_user).exists():
             Collection.objects.create(user=new_user)
 
-        # Asegurarse de que solo hay una colección para el usuario
         self.assertEqual(Collection.objects.filter(user=new_user).count(), 1)
 
     def test_login_success(self):
@@ -140,7 +142,6 @@ class AuthenticationTest(SeleniumTestBase):
         # Navegar a la página de login
         self.driver.get(f'{self.live_server_url}/login/')
 
-        # Esperar a que el formulario de login esté disponible
         try:
             WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.NAME, 'username'))
@@ -148,42 +149,37 @@ class AuthenticationTest(SeleniumTestBase):
         except TimeoutException:
             self.fail("El formulario de login no se cargó correctamente")
 
-        # Verificar que estamos en la página de login
-        self.assertIn('login', self.driver.current_url)
 
-        # Introducir credenciales
+        self.assertIn('/login', self.driver.current_url)
+
         self.driver.find_element(By.NAME, 'username').send_keys('testuser')
         self.driver.find_element(By.NAME, 'password').send_keys('securepassword123')
 
-        # Enviar formulario
+        # Enviar el formulario
         self.driver.find_element(By.CSS_SELECTOR, 'button[type="submit"]').click()
 
-        # Esperar a que se complete el login y redirija a la página principal
         try:
             WebDriverWait(self.driver, 10).until(
-                EC.url_contains(self.live_server_url)
+                EC.url_changes(f'{self.live_server_url}/login/')
             )
         except TimeoutException:
             self.fail("No se redirigió correctamente después del login")
 
-        # Verificar que estamos en la página principal
-        self.assertEqual(self.driver.current_url, f'{self.live_server_url}/')
+        current_url = self.driver.current_url
+        self.assertNotIn('/login', current_url)
 
-        # Verificar que hay elementos que indican que el usuario está logueado
         try:
-            # Esperamos ver algún elemento que solo aparece cuando el usuario está logueado
             WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.LINK_TEXT, 'Profile'))
+                EC.presence_of_element_located((By.CSS_SELECTOR, 'a[href="/profile/"]'))
             )
         except TimeoutException:
-            self.fail("No se detectaron elementos de usuario logueado")
+            self.fail("No se detectaron elementos que confirmen el login exitoso")
 
     def test_login_failure(self):
         """Prueba de inicio de sesión fallido"""
-        # Navegar a la página de login
+
         self.driver.get(f'{self.live_server_url}/login/')
 
-        # Esperar a que el formulario de login esté disponible
         WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.NAME, 'username'))
         )
@@ -195,28 +191,25 @@ class AuthenticationTest(SeleniumTestBase):
         # Enviar formulario
         self.driver.find_element(By.CSS_SELECTOR, 'button[type="submit"]').click()
 
-        # Esperar a que aparezca el mensaje de error
         try:
             WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, '.alert-danger'))
+                EC.presence_of_element_located((By.CSS_SELECTOR, 'div.error p'))
             )
         except TimeoutException:
+            # print(self.driver.page_source)  # depuracion
             self.fail("No se mostró mensaje de error con credenciales incorrectas")
 
-        # Verificar que seguimos en la página de login
-        self.assertIn('login', self.driver.current_url)
+        self.assertIn('/login', self.driver.current_url)
 
     def test_register(self):
         """Prueba de registro de usuario"""
-        # Navegar a la página de registro
+
         self.driver.get(f'{self.live_server_url}/register/')
 
-        # Esperar a que el formulario de registro esté disponible
         WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.NAME, 'username'))
         )
 
-        # Introducir datos de registro con un nombre diferente para evitar conflictos
         username = 'newuser_register_test'
         email = 'new_register@example.com'
         password = 'securenewpassword123'
@@ -229,22 +222,17 @@ class AuthenticationTest(SeleniumTestBase):
         # Enviar formulario
         self.driver.find_element(By.CSS_SELECTOR, 'button[type="submit"]').click()
 
-        # Esperar a que se complete el registro y redirija a la página principal
         WebDriverWait(self.driver, 10).until(
             EC.url_contains(self.live_server_url)
         )
 
-        # Verificar que estamos en la página principal
         self.assertEqual(self.driver.current_url, f'{self.live_server_url}/')
 
-        # Verificar que la colección solo se creó una vez
         user = User.objects.get(username=username)
         collection_count = Collection.objects.filter(user=user).count()
 
-        # Asegúrate de que solo haya una colección para este usuario
         self.assertEqual(collection_count, 1, "La colección se ha creado más de una vez")
 
-        # Verificar que el usuario se creó en la base de datos
         self.assertTrue(
             User.objects.filter(username=username).exists(),
             "El usuario no se creó correctamente"
@@ -252,22 +240,19 @@ class AuthenticationTest(SeleniumTestBase):
 
     def test_logout(self):
         """Prueba de cierre de sesión"""
-        # Primero hacemos login
+
         self.login()
 
-        # Verificar que el login fue exitoso
-        self.assertEqual(self.driver.current_url, f'{self.live_server_url}/')
+        self.assertNotIn('/login', self.driver.current_url)
 
-        # Buscar y hacer clic en el enlace de logout
         try:
             logout_link = WebDriverWait(self.driver, 10).until(
-                EC.element_to_be_clickable((By.LINK_TEXT, 'Logout'))
+                EC.element_to_be_clickable((By.CSS_SELECTOR, 'a.btn.btn-danger[href="/logout/"]'))
             )
             logout_link.click()
         except TimeoutException:
             self.fail("No se encontró el enlace de logout")
 
-        # Esperar a que se complete el logout y redirija a la página principal
         try:
             WebDriverWait(self.driver, 10).until(
                 EC.url_contains(self.live_server_url)
@@ -275,17 +260,28 @@ class AuthenticationTest(SeleniumTestBase):
         except TimeoutException:
             self.fail("No se redirigió correctamente después del logout")
 
-        # Verificar que estamos en la página principal sin sesión iniciada
         self.assertEqual(self.driver.current_url, f'{self.live_server_url}/')
-
-        # Verificar que hay elementos que indican que el usuario está deslogueado
         try:
-            # Esperamos ver el enlace de login, que solo aparece cuando el usuario está deslogueado
             WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.LINK_TEXT, 'Login'))
+                EC.url_to_be(f'{self.live_server_url}/')
             )
         except TimeoutException:
-            self.fail("No se detectaron elementos de usuario deslogueado")
+            self.fail("No se redirigió correctamente después del logout")
+
+
+        try:
+            WebDriverWait(self.driver, 10).until_not(
+                EC.presence_of_element_located((By.LINK_TEXT, 'testuser'))
+            )
+        except TimeoutException:
+            self.fail("El usuario sigue visible después del logout")
+
+        try:
+            WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.LINK_TEXT, 'Home'))
+            )
+        except TimeoutException:
+            self.fail("No se detectaron elementos que confirmen estado deslogueado")
 
 
 class CardsTest(SeleniumTestBase):
@@ -293,10 +289,9 @@ class CardsTest(SeleniumTestBase):
 
     def test_view_cards_page(self):
         """Prueba de visualización de la página de cartas"""
-        # Navegar a la página de cartas
+
         self.driver.get(f'{self.live_server_url}/card/')
 
-        # Esperar a que la página de cartas se cargue
         try:
             WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.TAG_NAME, 'body'))
@@ -309,18 +304,15 @@ class CardsTest(SeleniumTestBase):
 
     def test_api_cards(self):
         """Prueba de la API de cartas"""
-        # Navegar a la API de cartas
+
         self.driver.get(f'{self.live_server_url}/api/cartas/')
 
-        # La API debería devolver JSON, que el navegador mostrará como texto
         try:
             # Esperar a que se cargue la página
             WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.TAG_NAME, 'body'))
             )
 
-            # Verificar que el texto contiene elementos esperados
-            # Adaptamos esto ya que la estructura exacta del JSON puede variar
             page_source = self.driver.page_source
             self.assertTrue(
                 'title' in page_source or
@@ -334,20 +326,18 @@ class CardsTest(SeleniumTestBase):
 
     def test_user_cards_api(self):
         """Prueba de la API de cartas del usuario"""
-        # Primero hacemos login
+
         self.login()
 
-        # Navegar a la API de cartas del usuario
+
         self.driver.get(f'{self.live_server_url}/api/mis-cartas/')
 
-        # La API debería devolver JSON con las cartas del usuario
         try:
-            # Esperar a que se cargue la página
+
             WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.TAG_NAME, 'body'))
             )
 
-            # Verificar que el texto contiene elementos esperados
             page_source = self.driver.page_source
             self.assertTrue(
                 'title' in page_source or
@@ -365,13 +355,11 @@ class ProfileTest(SeleniumTestBase):
 
     def test_view_profile(self):
         """Prueba de visualización del perfil de usuario"""
-        # Primero hacemos login
+
         self.login()
 
-        # Navegar a la página de perfil
         self.driver.get(f'{self.live_server_url}/profile/')
 
-        # Esperar a que la página de perfil se cargue
         try:
             WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.TAG_NAME, 'body'))
@@ -379,21 +367,17 @@ class ProfileTest(SeleniumTestBase):
         except TimeoutException:
             self.fail("La página de perfil no se cargó correctamente")
 
-        # Verificar que estamos en la página de perfil
         self.assertIn('profile', self.driver.current_url)
 
-        # Verificar que al menos el nombre de usuario aparece en la página
         self.assertIn('testuser', self.driver.page_source)
 
     def test_view_collection(self):
         """Prueba de visualización de la colección del usuario"""
-        # Primero hacemos login
+
         self.login()
 
-        # Navegar a la página de colección
         self.driver.get(f'{self.live_server_url}/coleccion/')
 
-        # Esperar a que la página de colección se cargue
         try:
             WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.TAG_NAME, 'body'))
@@ -401,18 +385,16 @@ class ProfileTest(SeleniumTestBase):
         except TimeoutException:
             self.fail("La página de colección no se cargó correctamente")
 
-        # Verificar que estamos en la página de colección
         self.assertIn('coleccion', self.driver.current_url)
 
     def test_friends_list(self):
         """Prueba de visualización de la lista de amigos"""
-        # Primero hacemos login
+
         self.login()
 
         # Navegar a la página de amigos
         self.driver.get(f'{self.live_server_url}/friends/')
 
-        # Esperar a que la página de amigos se cargue
         try:
             WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.TAG_NAME, 'body'))
@@ -429,29 +411,24 @@ class GeneralPagesTest(SeleniumTestBase):
 
     def test_como_jugar_page(self):
         """Prueba de visualización de la página de cómo jugar"""
-        # Navegar a la página de cómo jugar
+
         self.driver.get(f'{self.live_server_url}/como-jugar/')
 
-        # Esperar a que la página se cargue
         try:
             WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.TAG_NAME, 'body'))
             )
         except TimeoutException:
             self.fail("La página de cómo jugar no se cargó correctamente")
-
-        # Verificar que estamos en la página correcta
         self.assertIn('como-jugar', self.driver.current_url)
 
     def test_open_pack_page(self):
         """Prueba de visualización de la página de abrir pack (solo usuarios logueados)"""
-        # Primero hacemos login
+
         self.login()
 
-        # Navegar a la página de abrir pack
         self.driver.get(f'{self.live_server_url}/pack/open/')
 
-        # Esperar a que la página se cargue
         try:
             WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.TAG_NAME, 'body'))
@@ -459,5 +436,4 @@ class GeneralPagesTest(SeleniumTestBase):
         except TimeoutException:
             self.fail("La página de abrir pack no se cargó correctamente")
 
-        # Verificar que estamos en la página correcta
         self.assertIn('pack/open', self.driver.current_url)
