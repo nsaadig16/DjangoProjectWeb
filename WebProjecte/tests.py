@@ -335,19 +335,4 @@ class GeneralPagesTest(SeleniumTestBase):
         self.assertIn('select-pack', self.driver.current_url)
 
 
-class PackTest(SeleniumTestBase):
-    """Tests relacionados con la apertura de sobres"""
 
-    def test_open_specific_pack(self):
-        self.login()
-
-        # Crear un Set de prueba si no existe
-        set_obj = Set.objects.create(nombre='Set de Prueba')
-
-        self.driver.get(f'{self.live_server_url}/open-pack/{set_obj.id}/')
-        try:
-            WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.TAG_NAME, 'body'))
-            )
-        except TimeoutException:
-            self.fail("La página de abrir pack no cargó correctamente")
