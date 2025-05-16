@@ -2,63 +2,110 @@ from django.core.management.base import BaseCommand
 from WebProjecte.models import Card, Rarity, CardSet
 
 class Command(BaseCommand):
-    help = 'Sembrar la base de datos con cartas de ejemplo'
+    help = 'Seed the database with example cards'
 
     def handle(self, *args, **kwargs):
-        # Crear o recuperar rareza
-        rareza, _ = Rarity.objects.get_or_create(
-            title="Legendaria",
+        # Create or retrieve rarities
+        legendary_rarity, _ = Rarity.objects.get_or_create(
+            title="Legendary",
             defaults={
-                'description': 'Cartas muy difíciles de conseguir',
+                'description': 'Very hard-to-get cards',
                 'probability': 0.05
             }
         )
-
-        # Crear o recuperar set
-        set_inicial, _ = CardSet.objects.get_or_create(
-            title="Set Inicial",
+        epic_rarity, _ = Rarity.objects.get_or_create(
+            title="Epic",
             defaults={
-                'description': 'Primera colección de cartas',
-                'image_url': 'https://example.com/set-inicial.jpg'
+                'description': 'Hard-to-get cards',
+                'probability': 0.15
             }
         )
 
-        # Lista de cartas a añadir
-        cartas = [
+        # Create or retrieve card set
+        initial_set, _ = CardSet.objects.get_or_create(
+            title="Unleashed Arcana",
+            defaults={
+                'description': 'First collection of cards',
+                'image': 'card_sets/Envelope_UNLEASHED_ARCANE.png'
+            }
+        )
+
+        # List of cards to add
+        cards = [
             {
-                "title": "Gimeno",
-                "description": "Devuelve tus cartas de cuarto curso a primer curso.",
-                "image_url": "https://inkscape.app/wp-content/uploads/imagen-vectorial.webp",
+                "title": "Teacher Latra",
+                "description": "Returns your fourth-year cards to the first year.",
+                "image": "card_images/unleashed_arcane/PROFESSOR_LATRA.png",
+                "rarity": legendary_rarity,
             },
             {
-                "title": "Torres",
-                "description": "Te obliga a reescribir tu TFG cada semana.",
-                "image_url": "https://example.com/torres.jpg",
+                "title": "Teacher David",
+                "description": "A wise professor who guides students through complex topics.",
+                "image": "card_images/unleashed_arcane/PROFESSOR_DAVID.png",
+                "rarity": legendary_rarity,
             },
             {
-                "title": "Martínez",
-                "description": "Cuando entra al campo, todos los estudiantes se duermen.",
-                "image_url": "https://example.com/martinez.jpg",
+                "title": "Teacher Miret",
+                "description": "An enthusiastic teacher who makes learning an adventure.",
+                "image": "card_images/unleashed_arcane/PROFESSOR_MIRET.png",
+                "rarity": legendary_rarity,
             },
             {
-                "title": "Bestia del Lab",
-                "description": "Una criatura legendaria con hambre de proyectos.",
-                "image_url": "https://example.com/bestia.jpg",
+                "title": "Teacher Planes",
+                "description": "A meticulous instructor focused on the fundamentals.",
+                "image": "card_images/unleashed_arcane/PROFESSOR_PLANES.png",
+                "rarity": legendary_rarity,
+            },
+            {
+                "title": "Teacher Roberto",
+                "description": "A supportive mentor who encourages independent thinking.",
+                "image": "card_images/unleashed_arcane/PROFESSOR_ROBERTO.png",
+                "rarity": legendary_rarity,
+            },
+            {
+                "title": "Student David",
+                "description": "A diligent student always eager to learn.",
+                "image": "card_images/unleashed_arcane/STUDENT_DAVID.png",
+                "rarity": epic_rarity,
+            },
+            {
+                "title": "Student Latra",
+                "description": "A resourceful student who finds creative solutions.",
+                "image": "card_images/unleashed_arcane/STUDENT_LATRA.png",
+                "rarity": epic_rarity,
+            },
+            {
+                "title": "Student Miret",
+                "description": "An inquisitive student with a passion for discovery.",
+                "image": "card_images/unleashed_arcane/STUDENT_MIRET.png",
+                "rarity": epic_rarity,
+            },
+            {
+                "title": "Student Planes",
+                "description": "A focused student with a knack for organization.",
+                "image": "card_images/unleashed_arcane/STUDENT_PLANES.png",
+                "rarity": epic_rarity,
+            },
+            {
+                "title": "Student Roberto",
+                "description": "A collaborative student who enjoys teamwork.",
+                "image": "card_images/unleashed_arcane/STUDENT_ROBERTO.png",
+                "rarity": epic_rarity,
             }
         ]
 
-        # Crear cartas
-        for carta_data in cartas:
+        # Create cards
+        for card_data in cards:
             card, created = Card.objects.get_or_create(
-                title=carta_data["title"],
+                title=card_data["title"],
                 defaults={
-                    "description": carta_data["description"],
-                    "image_url": carta_data["image_url"],
-                    "rarity": rareza,
-                    "card_set": set_inicial
+                    "description": card_data["description"],
+                    "image": card_data["image"],
+                    "rarity": card_data["rarity"],
+                    "card_set": initial_set
                 }
             )
             if created:
-                self.stdout.write(self.style.SUCCESS(f"✅ Carta '{card.title}' creada"))
+                self.stdout.write(self.style.SUCCESS(f"✅ Card '{card.title}' created"))
             else:
-                self.stdout.write(self.style.WARNING(f"⚠️ Carta '{card.title}' ya existía"))
+                self.stdout.write(self.style.WARNING(f"⚠️ Card '{card.title}' already exists"))

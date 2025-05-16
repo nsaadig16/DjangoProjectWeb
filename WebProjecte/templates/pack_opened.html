@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Obtained Cards{% endblock %}
+
+{% block content %}
+<div class="text-center">
+    <h1>You have obtained these cards!</h1>
+    <div class="row mt-4">
+        {% for card in cards %}
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="{{ card.image.url }}" class="card-img-top" alt="{{ card.title }}">
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

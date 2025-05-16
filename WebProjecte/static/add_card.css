@@ -23,14 +23,6 @@ body {
   padding: 0;
 }
 
-.container {
-  max-width: 600px;
-  margin: 50px auto;
-  padding: 20px 30px;
-  background-color: var(--white);
-  border-radius: var(--border-radius);
-  box-shadow: var(--box-shadow);
-}
 
 /* Cabecera del formulario */
 h2 {
@@ -90,12 +82,4 @@ button:hover {
 
 button:active {
   transform: translateY(2px);
-}
-
-/* Mensaje para permisos insuficientes */
-.no-permissions {
-  font-size: 18px;
-  color: var(--danger-color);
-  text-align: center;
-  margin-top: 20px;
 }

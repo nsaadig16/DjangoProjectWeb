@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Open Pack{% endblock %}
+
+{% block content %}
+<div class="text-center">
+    <h1>Open a Pack: {{ card_set.title }}</h1>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" style="border: none; background: none; padding: 0;">
+            <img src="{{ card_set.image.url }}" alt="Open Pack" style="width: 220px; height: auto; cursor: pointer;">
+        </button>
+    </form>
+</div>
+{% endblock %}

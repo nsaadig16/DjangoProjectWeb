@@ -25,14 +25,7 @@ body.dark-mode {
   color: var(--white);
 }
 
-.container {
-  max-width: 800px;
-  margin: 30px auto;
-  padding: 30px;
-  background-color: var(--white);
-  border-radius: var(--border-radius);
-  box-shadow: var(--box-shadow);
-}
+
 
 body.dark-mode .container {
   background-color: #1e1e1e;
