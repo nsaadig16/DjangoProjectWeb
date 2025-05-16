@@ -24,7 +24,7 @@ class Rarity(models.Model):
 class CardSet(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
-    image = models.ImageField(upload_to='card_sets', blank=True, null=True)  # <-- Cambiado
+    image = models.ImageField(upload_to='card_sets', blank=True, null=True)
 
     def __str__(self):
         return self.title
@@ -33,7 +33,7 @@ class CardSet(models.Model):
 class Card(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
-    image = models.ImageField(upload_to='card_images', blank=True, null=True)  # <-- Cambiado
+    image = models.ImageField(upload_to='card_images', blank=True, null=True)
     rarity = models.ForeignKey(Rarity, on_delete=models.CASCADE)
     card_set = models.ForeignKey(CardSet, on_delete=models.CASCADE)
 
