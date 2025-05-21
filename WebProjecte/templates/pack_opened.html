@@ -8,15 +8,10 @@
         {% for card in cards %}
             <div class="col-md-4 mb-4">
                 <div class="card">
-                    <img src="{{ card.image_url }}" class="card-img-top" alt="{{ card.title }}">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ card.title }}</h5>
-                        <p class="card-text">{{ card.rarity.title }}</p>
-                    </div>
+                    <img src="{{ card.image.url }}" class="card-img-top" alt="{{ card.title }}">
                 </div>
             </div>
         {% endfor %}
     </div>
-    <a href="{% url 'open_pack' %}" class="btn btn-secondary mt-3">Open another pack</a>
 </div>
 {% endblock %}

@@ -15,6 +15,7 @@ from .utils import open_pack
 from django.contrib.auth.decorators import user_passes_test
 from .forms import UserCardForm
 from .models import Card, CollectionCard, Collection
+from .models import CardSet
 import os
 import uuid
 import requests
@@ -161,9 +162,6 @@ def register(request):
 def como_jugar(request):
     return render(request, 'como_jugar.html')
 
-def card(request):
-    return render(request,'card.html')
-
 def api_cartas(request):
     cartas = Card.objects.select_related('rarity')
     data = [{
@@ -252,11 +250,20 @@ def reject_friend_request(request, request_id):
     return redirect('friends_list')
 
 @login_required
-def open_pack_view(request):
+def open_pack_view(request, set_id):
+    card_set = get_object_or_404(CardSet, pk=set_id)
+
     if request.method == 'POST':
-        cards = open_pack(request.user)
+        cards = open_pack(request.user, card_set.id)
         return render(request, 'pack_opened.html', {'cards': cards})
-    return render(request, 'open_pack.html')
+
+    return render(request, 'open_pack.html', {'card_set': card_set})
+
+@login_required
+def pack_selector_view(request):
+    card_sets = CardSet.objects.all()
+    return render(request, 'select_pack.html', {'card_sets': card_sets})
+
 
 @login_required
 def refresh_avatar(request):

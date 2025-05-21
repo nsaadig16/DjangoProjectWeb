@@ -5,7 +5,7 @@
 <div class="container">
     <h1>Friends</h1>
 
-    <h2>My Friends:</h2>
+    <h2>My friends:</h2>
         <ul class="list-group mb-4">
             {% for friend in request.user.profile.friends.all %}
                 <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -13,11 +13,11 @@
                     <a href="{% url 'remove_friend' friend.user.id %}" class="btn btn-danger btn-sm">Remove</a>
                 </li>
             {% empty %}
-                <li class="list-group-item">You don't have any friends yet 😢</li>
+                <li class="list-group-item">You have no friends yet 😢</li>
             {% endfor %}
         </ul>
 
-    <h2>Received Requests:</h2>
+    <h2>Received requests:</h2>
     <ul class="list-group mb-4">
         {% for fr in request.user.received_requests.all %}
             <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -28,11 +28,11 @@
                 </div>
             </li>
         {% empty %}
-            <li class="list-group-item">You don't have any pending requests.</li>
+            <li class="list-group-item">You have no pending requests.</li>
         {% endfor %}
     </ul>
 
-    <h2>Search Users:</h2>
+    <h2>Search users:</h2>
     <form method="GET" class="input-group mb-3">
         <input type="text" name="q" class="form-control" placeholder="Search user..." value="{{ query }}">
         <button type="submit" class="btn btn-primary">Search</button>
@@ -45,7 +45,7 @@
                 {% if user.profile not in request.user.profile.friends.all and user != request.user %}
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         {{ user.username }}
-                        <a href="{% url 'send_friend_request' user.id %}" class="btn btn-info btn-sm">Send Request</a>
+                        <a href="{% url 'send_friend_request' user.id %}" class="btn btn-info btn-sm">Send request</a>
                     </li>
                 {% endif %}
             {% empty %}
