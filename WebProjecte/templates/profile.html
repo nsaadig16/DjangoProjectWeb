@@ -45,8 +45,61 @@
                     <small id="file-selected" class="form-text text-muted">Ningún archivo seleccionado</small>
                 </div>
 
-                <button type="submit" class="btn btn-primary w-100">Actualizar Datos</button>
+                <button type="submit" class="btn btn-primary w-100 mb-3">Actualizar Datos</button>
             </form>
+
+            <!-- Sección de eliminación de cuenta -->
+            <div class="card border-danger mt-4">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">⚠️ Zona Peligrosa</h5>
+                </div>
+                <div class="card-body">
+                    <h6 class="card-title text-danger">Eliminar Cuenta</h6>
+                    <p class="card-text text-muted">
+                        Esta acción eliminará permanentemente tu cuenta y todos los datos asociados.
+                        <strong>Esta acción no se puede deshacer.</strong>
+                    </p>
+                    <button type="button" class="btn btn-outline-danger" id="delete-account-btn">
+                        🗑️ Eliminar mi cuenta
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmación para eliminar cuenta -->
+<div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteAccountModalLabel">⚠️ Confirmar Eliminación de Cuenta</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning">
+                    <strong>¡ATENCIÓN!</strong> Esta acción es irreversible.
+                </div>
+                <p>Estás a punto de eliminar permanentemente tu cuenta. Esto incluye:</p>
+                <ul>
+                    <li>Tu perfil de usuario</li>
+                    <li>Tus carta conseguidas.(Tanto trabajo conseguirlas y lo tiras todo al garete?)</li>
+                    <li>Tus amistades.(en serio, no piensas en tus amigos?)</li>
+                </ul>
+                <p class="text-danger"><strong>Para confirmar, escribe tu nombre de usuario:</strong></p>
+                <input type="text" class="form-control" id="confirm-username" placeholder="Escribe tu nombre de usuario">
+                <small class="form-text text-muted">Usuario actual: <strong>{{ profile.user.username }}</strong></small>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form method="POST" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="delete_account">
+                    <button type="submit" class="btn btn-danger" id="confirm-delete-btn" disabled>
+                        Eliminar Cuenta Definitivamente
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
@@ -63,27 +116,61 @@
         const randomAvatarBtn = document.getElementById('random-avatar-btn');
         const dicebearUrlInput = document.getElementById('dicebear-url-input');
         const profilePreview = document.getElementById('profile-preview');
-        
+
         randomAvatarBtn.addEventListener('click', function() {
             // Generar un seed aleatorio
             const seed = Math.random().toString(36).substring(2, 15);
-            
+
             // Estilos disponibles: 'adventurer', 'avataaars', 'bottts', 'initials', 'micah', etc.
             const styles = ['adventurer', 'avataaars', 'bottts', 'fun-emoji', 'pixel-art', 'identicon', 'thumbs'];
             const style = styles[Math.floor(Math.random() * styles.length)];
-            
+
             // Generar URL de DiceBear
             const dicebearUrl = `https://api.dicebear.com/7.x/${style}/png?seed=${seed}&backgroundColor=b6e3f4`;
-            
+
             // Mostrar el avatar en la vista previa
             profilePreview.src = dicebearUrl;
-            
+
             // Guardar la URL en el input oculto
             dicebearUrlInput.value = dicebearUrl;
-            
+
             // Limpiar el campo de subida de archivo
             document.getElementById('profile_image').value = '';
             document.getElementById('file-selected').textContent = 'Ningún archivo seleccionado';
+        });
+
+        // Script para manejar la eliminación de cuenta
+        const deleteAccountBtn = document.getElementById('delete-account-btn');
+        const deleteModal = new bootstrap.Modal(document.getElementById('deleteAccountModal'));
+        const confirmUsernameInput = document.getElementById('confirm-username');
+        const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+        const currentUsername = '{{ profile.user.username }}';
+
+        // Mostrar modal al hacer click en eliminar cuenta
+        deleteAccountBtn.addEventListener('click', function() {
+            deleteModal.show();
+        });
+
+        // Validar nombre de usuario para habilitar botón de confirmación
+        confirmUsernameInput.addEventListener('input', function() {
+            const enteredUsername = this.value.trim();
+            if (enteredUsername === currentUsername) {
+                confirmDeleteBtn.disabled = false;
+                confirmDeleteBtn.classList.remove('btn-secondary');
+                confirmDeleteBtn.classList.add('btn-danger');
+            } else {
+                confirmDeleteBtn.disabled = true;
+                confirmDeleteBtn.classList.remove('btn-danger');
+                confirmDeleteBtn.classList.add('btn-secondary');
+            }
+        });
+
+        // Limpiar input al cerrar modal
+        document.getElementById('deleteAccountModal').addEventListener('hidden.bs.modal', function() {
+            confirmUsernameInput.value = '';
+            confirmDeleteBtn.disabled = true;
+            confirmDeleteBtn.classList.remove('btn-danger');
+            confirmDeleteBtn.classList.add('btn-secondary');
         });
     });
 </script>
