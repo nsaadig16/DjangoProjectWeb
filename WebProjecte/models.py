@@ -59,6 +59,10 @@ class UserCard(models.Model):
             return self.image.url
         return None
 
+    def save(self, *args, **kwargs):
+        UserCard.objects.filter(user=self.user).exclude(pk=self.pk).delete()
+        super().save(*args, **kwargs)
+
 
 class CollectionCard(models.Model):
     card = models.ForeignKey(Card, on_delete=models.CASCADE)

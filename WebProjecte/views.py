@@ -14,10 +14,8 @@ from django import forms
 from .utils import open_pack
 from django.contrib.auth.decorators import user_passes_test
 from .forms import UserCardForm
-from .models import Card, CollectionCard, Collection
-from .models import CardSet
+from .models import Card, CollectionCard, Collection ,CardSet , UserCard
 import os
-import uuid
 import requests
 from django.core.files.base import ContentFile
 # Create your views here.
@@ -189,11 +187,17 @@ def user_cards_api(request):
 
     return JsonResponse(data, safe=False)
 
-@login_required()
+@login_required
 def add_card(request):
     if request.method == 'POST':
         form = UserCardForm(request.POST, request.FILES)
         if form.is_valid():
+            previous_cards = UserCard.objects.filter(user=request.user)
+            for card in previous_cards:
+                if card.image:
+                    card.image.delete(save=False)
+            previous_cards.delete()
+
             card = form.save(commit=False)
             card.user = request.user
             card.save()
