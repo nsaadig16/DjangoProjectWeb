@@ -15,9 +15,9 @@
         </div>
 
         <div class="mb-4">
-            <h4>Upload Your Own Cards</h4>
-            <p>This feature is coming soon. Stay tuned!</p>
-            <button class="btn btn-warning mt-2" disabled>Upload Cards (Coming Soon)</button>
+            <h4>Upload Your Own Card</h4>
+            <p>Create and upload your own card to personalize your collection!</p>
+            <a href="{% url 'add_card' %}" class="btn btn-warning mt-2">Upload Card</a>
         </div>
 
     {% else %}
@@ -28,7 +28,7 @@
             <a href="{% url 'register' %}" class="btn btn-dark">Register</a>
         </div>
         <p class="mt-4 text-white">Click here to view all available cards...</p>
-         <div class="mb-4">
+        <div class="mb-4">
             <a href="{% url 'coleccion' %}" class="btn btn-dark">View Cards</a>
         </div>
         <p>By signing up, you'll be able to open packs, upload cards, build your deck, and compete with other players.</p>
