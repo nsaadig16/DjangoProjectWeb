@@ -1,0 +1,11 @@
+<div vocab="https://schema.org/" typeof="ItemList">
+  {% for item in collection.collectioncard_set.all %}
+    <div property="itemListElement" typeof="Game">
+      <link property="url" href="{% url 'card_detail' item.card.id %}"/>
+    </div>
+  {% endfor %}
+  
+  <div property="owner" typeof="Person">
+    <link property="url" href="{% url 'profile' collection.user.id %}"/>
+  </div>
+</div>

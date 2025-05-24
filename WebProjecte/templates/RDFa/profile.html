@@ -1,0 +1,12 @@
+<div vocab="https://schema.org/" typeof="Person">
+  <!-- Each Player Has a Collection -->
+  <div property="owns" typeof="ItemList">
+    {% for item in user.collection.collectioncard_set.all %}
+      <div property="itemListElement" typeof="Game">
+        <span property="name">{{ item.card.title }}</span>
+        <meta property="quantity" content="{{ item.quantity }}"/>
+        <link property="url" href="{% url 'card_detail' item.card.id %}"/>
+      </div>
+    {% endfor %}
+  </div>
+</div>

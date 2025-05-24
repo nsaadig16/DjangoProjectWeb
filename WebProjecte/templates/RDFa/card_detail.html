@@ -1,0 +1,13 @@
+<div vocab="https://schema.org/" typeof="Game">
+  <h1 property="name">{{ card.title }}</h1>
+  <img property="image" src="{{ card.image_url }}" alt="{{ card.title }}"/>
+  
+  <!-- Related to CardSet -->
+  <div property="isPartOf" typeof="GameSeries">
+    <span property="name">{{ card.card_set.title }}</span>
+    <link property="url" href="{% url 'cardset_detail' card.card_set.id %}"/>
+  </div>
+
+  <!-- Related to User -->
+  <meta property="author" content="{{ collection.user.username }}"/>
+</div>

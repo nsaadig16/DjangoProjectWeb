@@ -1,0 +1,11 @@
+<div vocab="https://schema.org/" typeof="GameSeries">
+  <!-- Set Contains These Cards -->
+  <div property="hasPart" typeof="ItemList">
+    {% for card in cardset.card_set.all %}
+      <div property="itemListElement" typeof="Game">
+        <link property="url" href="{% url 'card_detail' card.id %}"/>
+        <span property="name">{{ card.title }}</span>
+      </div>
+    {% endfor %}
+  </div>
+</div>
