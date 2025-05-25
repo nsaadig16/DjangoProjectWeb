@@ -3,26 +3,29 @@
 {% block title %}Register - TCG{% endblock %}
 
 {% block content %}
-<div class="container d-flex justify-content-center align-items-center mt-5">
-    <!-- From Uiverse.io by ammarsaa -->
-    <form class="form" method="post">
+<div class="container d-flex justify-content-center align-items-center mt-5"
+     itemscope itemtype="https://schema.org/RegisterAction">
+    <meta itemprop="name" content="Register for TCG"/>
+    <meta itemprop="target" content="{{ request.build_absolute_uri }}"/>
+
+    <form class="form" method="post" itemprop="instrument">
         <p class="title">Register</p>
         <p class="message">Sign up now and get full access to our app.</p>
 
         {% csrf_token %}
 
         <label>
-            <input class="input" type="text" name="username" placeholder="" required="">
+            <input class="input" type="text" name="username" placeholder="" required="" itemprop="identifier">
             <span>Username</span>
         </label>
 
         <label>
-            <input class="input" type="email" name="email" placeholder="" required="">
+            <input class="input" type="email" name="email" placeholder="" required="" itemprop="email">
             <span>Email</span>
         </label>
 
         <label>
-            <input class="input" type="password" name="password1" placeholder="" required="">
+            <input class="input" type="password" name="password1" placeholder="" required="" itemprop="password">
             <span>Password</span>
         </label>
 
@@ -42,8 +45,13 @@
             </div>
         {% endif %}
 
-        <button class="submit" type="submit">Submit</button>
-        <p class="signin">Already have an account? <a href="{% url 'login' %}">Sign in</a></p>
+        <button class="submit" type="submit" itemprop="actionStatus">Submit</button>
+        <p class="signin">
+            Already have an account?
+            <a href="{% url 'login' %}" itemprop="potentialAction" itemscope itemtype="https://schema.org/LoginAction">
+                Sign in
+            </a>
+        </p>
     </form>
 </div>
 {% endblock %}
