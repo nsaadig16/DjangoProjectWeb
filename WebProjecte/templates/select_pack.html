@@ -5,8 +5,20 @@
 <h1 class="text-center">Select a Pack to Open</h1>
 <div class="card-grid">
   {% for set in card_sets %}
-    <a href="{% url 'open_pack' set.id %}" class="card-item">
-      <img class="card-image" src="{{ set.image.url }}" alt="{{ set.title }}" style="width: 220px; height: auto; cursor: pointer;">
+    <a href="{% url 'open_pack' set.id %}" class="card-item" itemscope itemtype="https://schema.org/Product">
+      <meta itemprop="sku" content="{{ set.id }}">
+      <meta itemprop="name" content="{{ set.title }}">
+      {% if set.description %}
+        <meta itemprop="description" content="{{ set.description }}">
+      {% endif %}
+      <img class="card-image" src="{{ set.image.url }}" alt="{{ set.title }}" style="width: 220px; height: auto; cursor: pointer;" itemprop="image">
+      <span class="d-block text-center mt-2" itemprop="name">{{ set.title }}</span>
+      {% if set.price %}
+      <div itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+        <span>Price: <span itemprop="price">{{ set.price }}</span> €</span>
+        <link itemprop="availability" href="https://schema.org/InStock" />
+      </div>
+      {% endif %}
     </a>
   {% endfor %}
 </div>
