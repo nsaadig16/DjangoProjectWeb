@@ -3,30 +3,39 @@
 {% block title %}How to Play - TCG{% endblock %}
 
 {% block content %}
-<div class="container text-center">
-    <h1 class="mt-4">HOW TO PLAY</h1>
-    <p class="lead">Discover how to collect and trade cards in our TCG.</p>
+<div class="container text-center" itemscope itemtype="https://schema.org/HowTo">
+    <meta itemprop="name" content="How to Play TCG">
+    <meta itemprop="description" content="Discover how to collect, trade, and master cards in our TCG.">
 
-    <section class="mt-5">
+    <h1 class="mt-4" itemprop="headline">HOW TO PLAY</h1>
+    <p class="lead" itemprop="description">Discover how to collect and trade cards in our TCG.</p>
+
+    <section class="mt-5" itemprop="step" itemscope itemtype="https://schema.org/HowToSection">
+        <meta itemprop="name" content="Card Collection">
         <div class="row align-items-center">
             <div class="col-md-6">
-                <div class="placeholder bg-secondary text-white d-flex align-items-center justify-content-center" style="width: 100%; height: 200px;">Image</div>
+                <div class="placeholder bg-secondary text-white d-flex align-items-center justify-content-center" style="width: 100%; height: 200px;">
+                    Image
+                </div>
             </div>
             <div class="col-md-6">
                 <h2>Card Collection</h2>
-                <p>Cards are divided into different rarities and can be collected to build the perfect deck.</p>
+                <p itemprop="itemListElement">Cards are divided into different rarities and can be collected to build the perfect deck.</p>
             </div>
         </div>
     </section>
 
-    <section class="mt-5 bg-light py-4">
+    <section class="mt-5 bg-light py-4" itemprop="step" itemscope itemtype="https://schema.org/HowToSection">
+        <meta itemprop="name" content="Rarities">
         <div class="row align-items-center">
             <div class="col-md-6 order-md-2">
-                <div class="placeholder bg-secondary text-white d-flex align-items-center justify-content-center" style="width: 100%; height: 200px;">Image</div>
+                <div class="placeholder bg-secondary text-white d-flex align-items-center justify-content-center" style="width: 100%; height: 200px;">
+                    Image
+                </div>
             </div>
             <div class="col-md-6 order-md-1">
                 <h2>Rarities</h2>
-                <ul class="text-start">
+                <ul class="text-start" itemprop="itemListElement">
                     <li><strong>Common:</strong> Easy to find in packs.</li>
                     <li><strong>Rare:</strong> Harder to obtain, with unique abilities.</li>
                     <li><strong>Epic:</strong> Powerful and valuable cards.</li>
@@ -36,15 +45,18 @@
         </div>
     </section>
 
-    <section class="mt-5">
+    <section class="mt-5" itemprop="step" itemscope itemtype="https://schema.org/HowToSection">
+        <meta itemprop="name" content="Card Trading">
         <div class="row align-items-center">
             <div class="col-md-6">
-                <div class="placeholder bg-secondary text-white d-flex align-items-center justify-content-center" style="width: 100%; height: 200px;">Image</div>
+                <div class="placeholder bg-secondary text-white d-flex align-items-center justify-content-center" style="width: 100%; height: 200px;">
+                    Image
+                </div>
             </div>
             <div class="col-md-6">
                 <h2>Card Trading</h2>
                 <p>Players can trade cards with others to complete their collection.</p>
-                <ul class="text-start">
+                <ul class="text-start" itemprop="itemListElement">
                     <li>Find players with cards you need.</li>
                     <li>Propose a fair trade based on rarity and value.</li>
                     <li>Expand your collection and improve your deck.</li>
@@ -53,15 +65,18 @@
         </div>
     </section>
 
-    <section class="mt-5 bg-light py-4">
+    <section class="mt-5 bg-light py-4" itemprop="step" itemscope itemtype="https://schema.org/HowToSection">
+        <meta itemprop="name" content="Expansions and Updates">
         <div class="row align-items-center">
             <div class="col-md-6 order-md-2">
-                <div class="placeholder bg-secondary text-white d-flex align-items-center justify-content-center" style="width: 100%; height: 200px;">Image</div>
+                <div class="placeholder bg-secondary text-white d-flex align-items-center justify-content-center" style="width: 100%; height: 200px;">
+                    Image
+                </div>
             </div>
             <div class="col-md-6 order-md-1">
                 <h2>Expansions and Updates</h2>
                 <p>New expansions are regularly released with unique cards and innovative mechanics.</p>
-                <ul class="text-start">
+                <ul class="text-start" itemprop="itemListElement">
                     <li>Stay tuned for new sets.</li>
                     <li>Discover special limited-edition cards.</li>
                     <li>Update your deck with the latest strategies.</li>
