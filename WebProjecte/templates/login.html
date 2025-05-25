@@ -3,18 +3,22 @@
 {% block title %}Sign In - TCG{% endblock %}
 
 {% block content %}
-<div class="container d-flex justify-content-center align-items-center mt-5">
-    <form method="POST" class="form">
+<div class="container d-flex justify-content-center align-items-center mt-5"
+     itemscope itemtype="https://schema.org/LoginAction">
+    <meta itemprop="name" content="Sign in to TCG"/>
+    <meta itemprop="target" content="{{ request.build_absolute_uri }}"/>
+
+    <form method="POST" class="form" itemprop="instrument">
         {% csrf_token %}
         <p class="title">Sign in</p>
 
         <label>
-            <input class="input" type="text" name="username" placeholder="" required="">
+            <input class="input" type="text" name="username" placeholder="" required="" itemprop="identifier">
             <span>Username</span>
         </label>
 
         <label>
-            <input class="input" type="password" name="password" placeholder="" required="">
+            <input class="input" type="password" name="password" placeholder="" required="" itemprop="password">
             <span>Password</span>
         </label>
 
@@ -26,8 +30,13 @@
         </div>
         {% endif %}
 
-        <button class="submit" type="submit">Submit</button>
-        <p class="register">Don't have an account? <a href="{% url 'register' %}">Sign up here</a></p>
+        <button class="submit" type="submit" itemprop="actionStatus">Submit</button>
+        <p class="register">
+            Don't have an account?
+            <a href="{% url 'register' %}" itemprop="potentialAction" itemscope itemtype="https://schema.org/RegisterAction">
+                Sign up here
+            </a>
+        </p>
     </form>
 </div>
 {% endblock %}
