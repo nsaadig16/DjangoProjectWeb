@@ -2,13 +2,24 @@
 {% block title %}Open Pack{% endblock %}
 
 {% block content %}
-<div class="text-center">
-    <h1>Open a Pack: {{ card_set.title }}</h1>
+<div class="text-center" itemscope itemtype="https://schema.org/Product">
+    <meta itemprop="name" content="{{ card_set.title }}">
+    {% if card_set.description %}
+        <meta itemprop="description" content="{{ card_set.description }}">
+    {% endif %}
+    <meta itemprop="sku" content="{{ card_set.id }}">
+    <h1>Open a Pack: <span itemprop="name">{{ card_set.title }}</span></h1>
     <form method="post">
         {% csrf_token %}
         <button type="submit" style="border: none; background: none; padding: 0;">
-            <img src="{{ card_set.image.url }}" alt="Open Pack" style="width: 220px; height: auto; cursor: pointer;">
+            <img src="{{ card_set.image.url }}" alt="Open Pack" style="width: 220px; height: auto; cursor: pointer;" itemprop="image">
         </button>
     </form>
+    {% if card_set.price %}
+    <div itemprop="offers" itemscope itemtype="https://schema.org/Offer" class="mt-3">
+        <span>Price: <span itemprop="price">{{ card_set.price }}</span> €</span>
+        <link itemprop="availability" href="https://schema.org/InStock" />
+    </div>
+    {% endif %}
 </div>
 {% endblock %}
