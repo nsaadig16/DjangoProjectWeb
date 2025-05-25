@@ -3,35 +3,53 @@
 {% block title %}Home - TCG{% endblock %}
 
 {% block content %}
-<div class="container text-center mt-5">
-    {% if user.is_authenticated %}
-        <h1 class="mb-3">Welcome, {{ user.username }}!</h1>
-        <p class="mb-4">Explore the world of collectible cards. What would you like to do today?</p>
+<div class="container text-center mt-5"
+     itemscope
+     itemtype="https://schema.org/WebSite">
 
-        <div class="mb-4">
-            <h4>Open Card Packs</h4>
-            <p>Discover new cards for your collection by opening mystery packs!</p>
-            <a href="{% url 'select_pack' %}" class="btn btn-success mt-2">Open Packs</a>
+    <meta itemprop="name" content="TCG - Colecciona Cartas"/>
+    <meta itemprop="url" content="{{ request.build_absolute_uri }}" />
+
+    {% if user.is_authenticated %}
+        <h1 class="mb-3">
+            <span itemprop="author" itemscope itemtype="https://schema.org/Person">
+                ¡Bienvenido, <span itemprop="name">{{ user.username }}</span>!
+            </span>
+        </h1>
+        <p class="mb-4" itemprop="description">
+            Explora el mundo de las cartas coleccionables. ¿Qué te gustaría hacer hoy?
+        </p>
+
+        <div class="mb-4" itemprop="potentialAction" itemscope itemtype="https://schema.org/ViewAction">
+            <h4>Abre sobres de cartas</h4>
+            <p>Descubre nuevas cartas para tu colección abriendo sobres misteriosos.</p>
+            <a href="{% url 'select_pack' %}" class="btn btn-success mt-2" itemprop="target">Abrir sobres</a>
         </div>
 
         <div class="mb-4">
-            <h4>Upload Your Own Cards</h4>
-            <p>This feature is coming soon. Stay tuned!</p>
-            <button class="btn btn-warning mt-2" disabled>Upload Cards (Coming Soon)</button>
+            <h4>Sube tus propias cartas</h4>
+            <p>Esta función estará disponible pronto. ¡Estate atento!</p>
+            <button class="btn btn-warning mt-2" disabled>Subir cartas (Próximamente)</button>
         </div>
 
     {% else %}
-        <h1 class="mb-3">Welcome to TCG</h1>
-        <p class="mb-3">Create an account and start your adventure in the world of collectible cards.</p>
+        <h1 class="mb-3">Bienvenido a <span itemprop="name">TCG</span></h1>
+        <p class="mb-3" itemprop="description">
+            Crea una cuenta y comienza tu aventura en el mundo de las cartas coleccionables.
+        </p>
         <div class="mb-4">
-            <a href="{% url 'login' %}" class="btn btn-primary me-2">Log In</a>
-            <a href="{% url 'register' %}" class="btn btn-dark">Register</a>
+            <a href="{% url 'login' %}" class="btn btn-primary me-2" itemprop="signIn">Iniciar sesión</a>
+            <a href="{% url 'register' %}" class="btn btn-dark" itemprop="signUp">Registrarse</a>
         </div>
-        <p class="mt-4 text-white">Click here to view all available cards...</p>
-         <div class="mb-4">
-            <a href="{% url 'coleccion' %}" class="btn btn-dark">View Cards</a>
+        <p class="mt-4 text-white">
+            Haz clic aquí para ver todas las cartas disponibles...
+        </p>
+        <div class="mb-4" itemprop="potentialAction" itemscope itemtype="https://schema.org/SearchAction">
+            <a href="{% url 'coleccion' %}" class="btn btn-dark" itemprop="target">Ver cartas</a>
         </div>
-        <p>By signing up, you'll be able to open packs, upload cards, build your deck, and compete with other players.</p>
+        <p>
+            Al registrarte podrás abrir sobres, subir cartas, crear tu mazo y competir con otros jugadores.
+        </p>
     {% endif %}
 </div>
 {% endblock %}
