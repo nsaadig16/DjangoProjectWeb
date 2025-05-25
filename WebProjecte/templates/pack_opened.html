@@ -7,8 +7,28 @@
     <div class="row mt-4">
         {% for card in cards %}
             <div class="col-md-4 mb-4">
-                <div class="card">
-                    <img src="{{ card.image.url }}" class="card-img-top" alt="{{ card.title }}">
+                <div class="card" itemscope itemtype="https://schema.org/Product">
+                    <meta itemprop="sku" content="{{ card.id }}">
+                    <meta itemprop="name" content="{{ card.title }}">
+                    {% if card.description %}
+                        <meta itemprop="description" content="{{ card.description }}">
+                    {% endif %}
+                    <img src="{{ card.image.url }}" class="card-img-top" alt="{{ card.title }}" itemprop="image">
+                    <div class="card-body">
+                        <h5 class="card-title" itemprop="name">{{ card.title }}</h5>
+                        {% if card.price %}
+                        <div itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+                            <span>Price: <span itemprop="price">{{ card.price }}</span> €</span>
+                            <link itemprop="availability" href="https://schema.org/InStock" />
+                        </div>
+                        {% endif %}
+                        {% if card.rating %}
+                        <div itemprop="aggregateRating" itemscope itemtype="https://schema.org/AggregateRating">
+                            Rating: <span itemprop="ratingValue">{{ card.rating }}</span> /
+                            <span itemprop="bestRating">5</span>
+                        </div>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         {% endfor %}
