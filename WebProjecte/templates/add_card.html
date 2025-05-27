@@ -5,18 +5,15 @@
 <link rel="stylesheet" href="{% static 'add_card.css' %}">
 {% endblock %}
 {% block content %}
-    <head>
-    {% load static %}
-        <title></title>
-    </head>
-<div class="container">
+<div class="container" itemscope itemtype="https://schema.org/Product">
+    <meta itemprop="name" content="Add Card">
     <h2>Add Card</h2>
-    <form method="post">
+    <form method="post" itemprop="potentialAction" itemscope itemtype="https://schema.org/CreateAction">
         {% csrf_token %}
         <div class="form-group">
             {{ form.as_p }}
         </div>
-        <button type="submit">Save</button>
+        <button type="submit" itemprop="actionStatus">Save</button>
     </form>
 </div>
 {% endblock %}
