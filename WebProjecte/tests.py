@@ -494,6 +494,200 @@ class GeneralPagesTest(SeleniumTestBase):
         self.assertIn('select-pack', self.driver.current_url)
 
 
+class CardUploadTest(SeleniumTestBase):
+    """Test for card upload by non-admin users"""
+
+    def setUp(self):
+        super().setUp()
+        # Create an additional non-admin user for testing
+        self.regular_user = User.objects.create_user(
+            username='regularuser',
+            email='regular@example.com',
+            password='regularpass123'
+        )
+        self.regular_collection, _ = Collection.objects.get_or_create(user=self.regular_user)
+
+        # Create additional rarity and card set for testing
+        self.rare_rarity = Rarity.objects.create(
+            title='Rare',
+            description='Rare card',
+            probability=0.2
+        )
+
+        # Dummy image for testing
+        self.dummy_image = SimpleUploadedFile(
+            name='upload_test.jpg',
+            content=b'\x47\x49\x46\x38\x39\x61\x02\x00\x01\x00\x80\x00\x00\x00\x00\x00\xFF\xFF\xFF\x21\xF9\x04\x01\x00\x00\x00\x00\x2C\x00\x00\x00\x00\x02\x00\x01\x00\x00\x02\x02\x44\x01\x00\x3B',
+            content_type='image/jpeg'
+        )
+
+    def test_user_can_upload_card(self):
+        """Test that a non-admin user can upload a card"""
+        # Log in as regular user
+        self.login('regularuser', 'regularpass123')
+
+        # Navigate to the card upload page
+        self.driver.get(f'{self.live_server_url}/add-card/')
+
+        # Verify that we reached the correct page
+        WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.TAG_NAME, 'form'))
+        )
+
+        # Fill out the card upload form
+        # Card title
+        title_input = self.driver.find_element(By.NAME, 'title')
+        title_input.send_keys('My Custom Card')
+
+        # Card description
+        description_input = self.driver.find_element(By.NAME, 'description')
+        description_input.send_keys('This is a card created by a regular user')
+
+        # Select rarity
+        rarity_select = self.driver.find_element(By.NAME, 'rarity')
+        rarity_select.click()
+        rarity_option = WebDriverWait(self.driver, 5).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, f'option[value="{self.rarity.id}"]'))
+        )
+        rarity_option.click()
+
+        # Select card set
+        cardset_select = self.driver.find_element(By.NAME, 'card_set')
+        cardset_select.click()
+        cardset_option = WebDriverWait(self.driver, 5).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, f'option[value="{self.card_set.id}"]'))
+        )
+        cardset_option.click()
+
+        # Upload image (simulate file selection)
+        file_input = self.driver.find_element(By.NAME, 'image')
+        # In a real test, you would upload a real file here
+        # file_input.send_keys('/path/to/image.jpg')
+
+        # Submit form
+        submit_btn = self.driver.find_element(By.CSS_SELECTOR, 'button[type="submit"]')
+        submit_btn.click()
+
+        # Verify successful redirection
+        WebDriverWait(self.driver, 10).until_not(
+            EC.url_contains('/add-card/')
+        )
+
+        # Verify that the card was created in the database
+        uploaded_card = Card.objects.filter(
+            title='My Custom Card',
+            description='This is a card created by a regular user'
+        ).first()
+
+        self.assertIsNotNone(uploaded_card, "The card should have been created in the database")
+        self.assertEqual(uploaded_card.rarity, self.rarity)
+        self.assertEqual(uploaded_card.card_set, self.card_set)
+
+        # Verify that the user has the card in their collection
+        collection_card = CollectionCard.objects.filter(
+            card=uploaded_card,
+            collection=self.regular_collection
+        ).first()
+
+        self.assertIsNotNone(collection_card, "The card should be in the user's collection")
+        self.assertEqual(collection_card.quantity, 1)
+
+    def test_upload_card_validation_errors(self):
+        """Test form validation errors on upload"""
+        self.login('regularuser', 'regularpass123')
+        self.driver.get(f'{self.live_server_url}/add-card/')
+
+        submit_btn = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, 'button[type="submit"]'))
+        )
+        submit_btn.click()
+
+        time.sleep(2)
+        self.assertIn('/add-card/', self.driver.current_url)
+
+        # Check that error messages appear
+        error_messages = self.driver.find_elements(By.CSS_SELECTOR, '.error, .invalid-feedback, .alert-danger')
+        self.assertTrue(len(error_messages) > 0, "Validation error messages should appear")
+
+    def test_user_can_view_uploaded_cards(self):
+        """Test that the user can view their uploaded cards"""
+        user_card = Card.objects.create(
+            title='User Card',
+            description='Card created by the regular user',
+            rarity=self.rarity,
+            card_set=self.card_set,
+            image=self.dummy_image,
+            created_by=self.regular_user  # Assuming there is a created_by field
+        )
+
+        CollectionCard.objects.create(
+            card=user_card,
+            collection=self.regular_collection,
+            quantity=1
+        )
+
+        # Log in and navigate to "my cards" using the existing API
+        self.login('regularuser', 'regularpass123')
+        self.driver.get(f'{self.live_server_url}/api/mis-cartas/')
+
+        # Verify that the card appears in the list
+        WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.TAG_NAME, 'body'))
+        )
+
+        page_source = self.driver.page_source
+        self.assertIn('User Card', page_source)
+        self.assertIn('Card created by the regular user', page_source)
+
+    def test_upload_card_with_file(self):
+        """Test uploading a card with a real image file"""
+        import tempfile
+        import os
+
+        # Create a temporary image file for the test
+        with tempfile.NamedTemporaryFile(suffix='.jpg', delete=False) as tmp_file:
+            # Write basic image data
+            tmp_file.write(
+                b'\xFF\xD8\xFF\xE0\x00\x10JFIF\x00\x01\x01\x01\x00H\x00H\x00\x00\xFF\xDB\x00C\x00\x08\x06\x06\x07\x06\x05\x08\x07\x07\x07\t\t\x08\n\x0C\x14\r\x0C\x0B\x0B\x0C\x19\x12\x13\x0F\x14\x1D\x1A\x1F\x1E\x1D\x1A\x1C\x1C $.\' ",#\x1C\x1C(7),01444\x1F\'9=82<.342\xFF\xC0\x00\x11\x08\x00\x01\x00\x01\x01\x01\x11\x00\x02\x11\x01\x03\x11\x01\xFF\xC4\x00\x14\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x08\xFF\xC4\x00\x14\x10\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xFF\xDA\x00\x0C\x03\x01\x00\x02\x11\x03\x11\x00\x3F\x00\xAA\xFF\xD9'
+            )
+            temp_image_path = tmp_file.name
+
+        try:
+            self.login('regularuser', 'regularpass123')
+            self.driver.get(f'{self.live_server_url}/upload-card/')
+
+            self.driver.find_element(By.NAME, 'title').send_keys('Card with Image')
+            self.driver.find_element(By.NAME, 'description').send_keys('Card with real image file')
+
+            rarity_select = self.driver.find_element(By.NAME, 'rarity')
+            rarity_select.click()
+            WebDriverWait(self.driver, 5).until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, f'option[value="{self.rarity.id}"]'))
+            ).click()
+
+            cardset_select = self.driver.find_element(By.NAME, 'card_set')
+            cardset_select.click()
+            WebDriverWait(self.driver, 5).until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, f'option[value="{self.card_set.id}"]'))
+            ).click()
+
+            file_input = self.driver.find_element(By.NAME, 'image')
+            file_input.send_keys(temp_image_path)
+
+            self.driver.find_element(By.CSS_SELECTOR, 'button[type="submit"]').click()
+
+            WebDriverWait(self.driver, 10).until_not(
+                EC.url_contains('/upload-card/')
+            )
+
+            uploaded_card = Card.objects.filter(title='Card with Image').first()
+            self.assertIsNotNone(uploaded_card)
+            self.assertTrue(uploaded_card.image.name)
+
+        finally:
+            if os.path.exists(temp_image_path):
+                os.unlink(temp_image_path)
+
 class CleanupTest(SeleniumTestBase):
     """Test class specifically for cleaning up test users"""
 
