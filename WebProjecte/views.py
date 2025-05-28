@@ -281,12 +281,17 @@ def refresh_avatar(request):
     return render(request, 'profile.html')
 
 def coleccion_view(request):
-    collection = Collection.objects.get(user=request.user)
+    cartas_usuario_ids = set()
 
-
-    cartas_usuario_ids = set(
-        CollectionCard.objects.filter(collection=collection).values_list('card_id', flat=True)
-    )
+    if request.user.is_authenticated:
+        try:
+            collection = Collection.objects.get(user=request.user)
+            cartas_usuario_ids = set(
+                CollectionCard.objects.filter(collection=collection).values_list('card_id', flat=True)
+            )
+        except Collection.DoesNotExist:
+            # Si el usuario no tiene colección, simplemente deja la lista vacía
+            pass
 
     cartas = []
     for carta in Card.objects.all().order_by('id'):
