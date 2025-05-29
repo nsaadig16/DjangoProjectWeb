@@ -2,12 +2,12 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
 from .models import Profile
-from .models import Card
+from .models import UserCard
 
-class CardForm(forms.ModelForm):
+class UserCardForm(forms.ModelForm):
     class Meta:
-        model = Card
-        fields = ['title', 'description', 'image', 'rarity', 'card_set']
+        model = UserCard
+        fields = ['title', 'description', 'image', 'rarity']
 
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
@@ -23,8 +23,8 @@ class CustomUserCreationForm(UserCreationForm):
         return password2
 
     def save(self, commit=True):
-        user = super().save(commit=False)  # No guardamos todavía en la BD
-        user.set_password(self.cleaned_data["password1"])  # Encriptamos la contraseña
+        user = super().save(commit=False)  
+        user.set_password(self.cleaned_data["password1"])  
         if commit:
             user.save()
         return user

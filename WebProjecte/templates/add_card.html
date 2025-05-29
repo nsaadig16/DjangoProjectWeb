@@ -11,7 +11,7 @@
     </head>
 <div class="container">
     <h2>Add Card</h2>
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="form-group">
             {{ form.as_p }}

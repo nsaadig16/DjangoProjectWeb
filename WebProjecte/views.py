@@ -13,11 +13,9 @@ from django.contrib.auth.models import User
 from django import forms
 from .utils import open_pack
 from django.contrib.auth.decorators import user_passes_test
-from .forms import CardForm
-from .models import Card, CollectionCard, Collection
-from .models import CardSet
+from .forms import UserCardForm
+from .models import Card, CollectionCard, Collection ,CardSet , UserCard
 import os
-import uuid
 import requests
 from django.core.files.base import ContentFile
 # Create your views here.
@@ -168,8 +166,8 @@ def api_cards(request):
         'name': card.title,
         'image': card.image.url,
         'text': card.description,
-        'power': getattr(card, 'poder', '?'),
-        'cost': getattr(card, 'coste', 0),
+        'power': getattr(card, 'power', '?'),
+        'cost': getattr(card, 'cost', 0),
         'type': card.rarity.title
     } for card in cards]
     return JsonResponse(data, safe=False)
@@ -191,15 +189,23 @@ def user_cards_api(request):
 
     return JsonResponse(data, safe=False)
 
-@login_required()
+@login_required
 def add_card(request):
     if request.method == 'POST':
-        form = CardForm(request.POST)
+        form = UserCardForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            return redirect('cards')  # redirect to the card list or wherever you prefer
+            previous_cards = UserCard.objects.filter(user=request.user)
+            for card in previous_cards:
+                if card.image:
+                    card.image.delete(save=False)
+            previous_cards.delete()
+
+            card = form.save(commit=False)
+            card.user = request.user
+            card.save()
+            return redirect('home')
     else:
-        form = CardForm()
+        form = UserCardForm()
 
     return render(request, 'add_card.html', {'form': form})
 
@@ -277,14 +283,20 @@ def refresh_avatar(request):
     return render(request, 'profile.html')
 
 def collection_view(request):
-    if request.user.is_authenticated:
-        try:
-            collection = Collection.objects.get(user=request.user)
-            collection_cards = CollectionCard.objects.filter(collection=collection).select_related('card')
-            cards = [cc.card for cc in collection_cards]
-        except Collection.DoesNotExist:
-            cards = []
-    else:
-        cards = Card.objects.all()
+    collection = Collection.objects.get(user=request.user)
+
+
+    user_cards_ids = set(
+        CollectionCard.objects.filter(collection=collection).values_list('card_id', flat=True)
+    )
+
+    cards = []
+    for card in Card.objects.all().order_by('id'):
+        cards.append({
+            'id': card.id,
+            'name': card.title,
+            'image': card.image,
+            'has': card.id in user_cards_ids
+        })
 
     return render(request, 'collection.html', {'cards': cards})
