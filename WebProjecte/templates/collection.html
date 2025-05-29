@@ -5,7 +5,7 @@ Card Collection
 {% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'colection.css' %}">
+<link rel="stylesheet" href="{% static 'collection.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -13,14 +13,14 @@ Card Collection
 <h1>Collection</h1>
 
 <main id="cardContainer" class="card-grid">
-  {% for carta in cartas %}
+  {% for card in cards %}
     <div class="card-item">
-      <img class="card-image" src="{{ carta.image.url }}" alt="Card image">
+      <img class="card-image" src="{{ card.image.url }}" alt="Card image">
     </div>
   {% endfor %}
 </main>
 
-<!-- Modal para mostrar imagen ampliada -->
+<!-- Modal to display enlarged image -->
 <div id="modal" class="modal">
   <span class="close">&times;</span>
   <img class="modal-content" id="modalImage">

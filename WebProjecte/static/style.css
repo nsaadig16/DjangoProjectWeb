@@ -1,17 +1,17 @@
-/* Modo claro (por defecto) */
+/* Light mode (default) */
 body {
     background-color: #ffffff;
     color: #121212;
     transition: background-color 0.3s, color 0.3s;
 }
 
-/* Modo oscuro */
+/* Dark mode */
 .dark-mode {
     background-color: #121212 !important;
     color: #ffffff !important;
 }
 
-/* Ajustar navbar en modo oscuro */
+/* Adjust navbar in dark mode */
 .dark-mode .navbar {
     background-color: #1e1e1e !important;
 }
@@ -30,13 +30,13 @@ body {
     color: #121212;
 }
 
-/* Cambiar footer */
+/* Change footer */
 .dark-mode footer {
     background-color: #1e1e1e !important;
     color: #bbbbbb !important;
 }
 
-/* Formulario */
+/* Form */
 .form {
     display: flex;
     flex-direction: column;
@@ -196,7 +196,7 @@ body {
     }
 }
 
-/* Estilos para el perfil de usuario */
+/* Styles for user profile */
 .profile-container {
     max-width: 800px;
     margin: 30px auto;
@@ -340,7 +340,7 @@ body {
     transform: translateY(0);
 }
 
-/* Efecto de animación en los campos del formulario */
+/* Animation effect on form fields */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -368,7 +368,7 @@ body {
     animation-delay: 0.3s;
 }
 
-/* Responsividad */
+/* Responsiveness */
 @media (max-width: 768px) {
     .profile-container {
         padding: 20px;

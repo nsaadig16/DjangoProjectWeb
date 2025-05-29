@@ -43,7 +43,7 @@ class SeleniumTestBase(StaticLiveServerTestCase):
         )
         self.test_collection, _ = Collection.objects.get_or_create(user=self.test_user)
 
-        # Imagen dummy para evitar fallo en ImageField obligatorio
+        # Dummy image to avoid failure in required ImageField
         dummy_image = SimpleUploadedFile(
             name='test_image.jpg',
             content=b'\x47\x49\x46\x38\x39\x61\x02\x00\x01\x00\x80\x00\x00\x00\x00\x00\xFF\xFF\xFF\x21\xF9\x04\x01\x00\x00\x00\x00\x2C\x00\x00\x00\x00\x02\x00\x01\x00\x00\x02\x02\x44\x01\x00\x3B',
@@ -124,14 +124,14 @@ class AuthenticationTest(SeleniumTestBase):
 class CardsTest(SeleniumTestBase):
     """Card views and API"""
 
-    def test_api_cartas(self):
-        self.driver.get(f'{self.live_server_url}/api/cartas/')
+    def test_api_cards(self):
+        self.driver.get(f'{self.live_server_url}/api/cards/')
         body = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, 'body')))
         self.assertIn('Test Card', body.text)
 
     def test_user_cards_api_authenticated(self):
         self.login()
-        self.driver.get(f'{self.live_server_url}/api/mis-cartas/')
+        self.driver.get(f'{self.live_server_url}/api/my-cards/')
         body = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, 'body')))
         self.assertTrue('Test Card' in body.text or 'quantity' in body.text)
 
@@ -147,8 +147,8 @@ class ProfileTest(SeleniumTestBase):
 
     def test_view_collection(self):
         self.login()
-        self.driver.get(f'{self.live_server_url}/coleccion/')
-        self.assertIn('coleccion', self.driver.current_url)
+        self.driver.get(f'{self.live_server_url}/collection/')
+        self.assertIn('collection', self.driver.current_url)
 
     def test_view_friends(self):
         self.login()
@@ -163,9 +163,9 @@ class GeneralPagesTest(SeleniumTestBase):
         self.driver.get(f'{self.live_server_url}/')
         self.assertIn('home', self.driver.title.lower())
 
-    def test_como_jugar_page(self):
-        self.driver.get(f'{self.live_server_url}/como-jugar/')
-        self.assertIn('como-jugar', self.driver.current_url)
+    def test_how_to_play_page(self):
+        self.driver.get(f'{self.live_server_url}/how-to-play/')
+        self.assertIn('how-to-play', self.driver.current_url)
 
     def test_select_pack(self):
         self.login()
