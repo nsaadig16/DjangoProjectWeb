@@ -56,6 +56,47 @@ def profile_view(request):
         profile = Profile.objects.create(user=request.user)
 
     if request.method == 'POST':
+        action = request.POST.get('action')
+
+        # Manejar eliminación de cuenta
+        if action == 'delete_account':
+            user = request.user
+
+            try:
+                # Eliminar imagen de perfil si existe
+                if hasattr(user, 'profile') and user.profile.profile_image:
+                    try:
+                        image_path = user.profile.profile_image.path
+                        if os.path.exists(image_path) and 'default.jpg' not in image_path:
+                            os.remove(image_path)
+                    except Exception as e:
+                        print(f"Error al eliminar imagen de perfil: {e}")
+
+                # Eliminar solicitudes de amistad relacionadas
+                FriendRequest.objects.filter(Q(from_user=user) | Q(to_user=user)).delete()
+
+                # Eliminar colección y cartas del usuario
+                try:
+                    collection = Collection.objects.get(user=user)
+                    CollectionCard.objects.filter(collection=collection).delete()
+                    collection.delete()
+                except Collection.DoesNotExist:
+                    pass
+
+                # Cerrar sesión antes de eliminar
+                auth_logout(request)
+
+                # Eliminar el usuario (esto también elimina el perfil por CASCADE)
+                user.delete()
+
+                messages.success(request, 'Tu cuenta ha sido eliminada exitosamente.')
+                return redirect('home')
+
+            except Exception as e:
+                messages.error(request, f'Error al eliminar la cuenta: {e}')
+                return redirect('profile')
+
+        # Manejar actualización normal del perfil
         form = ProfileUpdateForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             user = request.user
@@ -69,11 +110,11 @@ def profile_view(request):
             password = form.cleaned_data.get('password')
             if password:
                 user.set_password(password)
-            
+
             # Verificar si se subió una nueva imagen de perfil o se usó DiceBear
             has_new_upload = request.FILES.get('profile_image') is not None
             dicebear_url = form.cleaned_data.get('dicebear_url')
-            
+
             # Manejar actualización de imagen de perfil
             if has_new_upload or dicebear_url:
                 # Eliminar imagen anterior si existe y no es la predeterminada
@@ -84,10 +125,10 @@ def profile_view(request):
                             os.remove(image_path)
                     except Exception as e:
                         messages.error(request, f"Error al eliminar la imagen anterior: {e}")
-                
+
                 # Nombre consistente para todas las imágenes de perfil
                 profile_filename = f"profilepic_{user.username}.png"
-                
+
                 # Guardar nueva imagen basada en la fuente
                 if dicebear_url:
                     # Usar DiceBear tiene prioridad sobre la subida manual
@@ -113,19 +154,19 @@ def profile_view(request):
                         uploaded_image,
                         save=False
                     )
-                
+
                 # Limpiar el campo del formulario para evitar guardar dos veces
                 form.cleaned_data['profile_image'] = None
 
             user.save()
             profile = form.save()
-            
+
             messages.success(request, 'Tu perfil ha sido actualizado correctamente.')
-            
+
             # Si se cambió la contraseña, volver a iniciar sesión
             if password:
                 return redirect('login')
-                
+
             return redirect('profile')
     else:
         form = ProfileUpdateForm(instance=profile)
@@ -135,7 +176,6 @@ def profile_view(request):
         'form': form,
     }
     return render(request, 'profile.html', context)
-
 
 @login_required
 def my_view(request):
