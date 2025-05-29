@@ -18,6 +18,9 @@ from .models import Card, CollectionCard, Collection ,CardSet , UserCard
 import os
 import requests
 from django.core.files.base import ContentFile
+from .models import PackStatus
+from django.utils import timezone
+
 # Create your views here.
 
 def home(request):
@@ -256,12 +259,36 @@ def reject_friend_request(request, request_id):
 @login_required
 def open_pack_view(request, set_id):
     card_set = get_object_or_404(CardSet, pk=set_id)
+    status, _ = PackStatus.objects.get_or_create(user=request.user)
+    status.update_packs()
 
     if request.method == 'POST':
-        cards = open_pack(request.user, card_set.id)
-        return render(request, 'pack_opened.html', {'cards': cards})
+        if status.packs_available > 0:
+            status.packs_available -= 1
+            status.last_opened = timezone.now()
+            status.save()
 
-    return render(request, 'open_pack.html', {'card_set': card_set})
+            collection = Collection.objects.get(user=request.user)
+            owned_card_ids = set(CollectionCard.objects.filter(collection=collection).values_list('card_id', flat=True))
+
+            cards = open_pack(request.user, card_set.id)
+
+            cards_with_status = []
+            for card in cards:
+                is_new = card.id not in owned_card_ids
+                cards_with_status.append({'card': card, 'is_new': is_new})
+
+            return render(request, 'pack_opened.html', {
+                'cards_with_status': cards_with_status
+            })
+        else:
+            messages.error(request, 'You have no packs available. Please wait for regeneration.')
+            return redirect('open_pack', set_id=set_id)
+
+    return render(request, 'open_pack.html', {
+        'card_set': card_set,
+        'packs_available': status.packs_available
+    })
 
 @login_required
 def pack_selector_view(request):
