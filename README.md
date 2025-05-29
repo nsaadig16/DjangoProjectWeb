@@ -75,7 +75,7 @@ git clone https://github.com/nsaadig16/DjangoProjectWeb.git
 cd DjangoProjectWeb
 ```
 
-3. Create a virtual enviorentment (OPTIONAL)
+3. Create a virtual environment (OPTIONAL)
 
 ```bash
 python -m venv venv
