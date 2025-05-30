@@ -224,20 +224,20 @@ class CardsHybridTest(HybridTestBase):
 
     def test_cards_api_backend(self):
         """Test cards API using Django client"""
-        response = self.client.get('/api/cartas/')
+        response = self.client.get('/api/cards/')
         self.assertEqual(response.status_code, 200)
         self.assertIn('Test Card', response.content.decode())
 
     def test_cards_api_ui(self):
         """Test cards API through browser"""
-        self.driver.get(f'{self.live_server_url}/api/cartas/')
+        self.driver.get(f'{self.live_server_url}/api/cards/')
         body = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, 'body')))
         self.assertIn('Test Card', body.text)
 
     def test_user_cards_api_backend(self):
         """Test authenticated user cards API using Django client"""
         self.login_via_client()
-        response = self.client.get('/api/mis-cartas/')
+        response = self.client.get('/api/my-cards/')
         self.assertEqual(response.status_code, 200)
         response_text = response.content.decode()
         self.assertTrue('Test Card' in response_text or 'quantity' in response_text)
@@ -245,7 +245,7 @@ class CardsHybridTest(HybridTestBase):
     def test_user_cards_api_ui(self):
         """Test authenticated user cards API through browser"""
         self.login_via_selenium()
-        self.driver.get(f'{self.live_server_url}/api/mis-cartas/')
+        self.driver.get(f'{self.live_server_url}/api/my-cards/')
         body = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, 'body')))
         self.assertTrue('Test Card' in body.text or 'quantity' in body.text)
 
@@ -270,14 +270,14 @@ class ProfileHybridTest(HybridTestBase):
     def test_collection_access_backend(self):
         """Test collection access using Django client"""
         self.login_via_client()
-        response = self.client.get('/coleccion/')
+        response = self.client.get('/collection/')
         self.assertEqual(response.status_code, 200)
 
     def test_collection_ui(self):
         """Test collection page through browser"""
         self.login_via_selenium()
-        self.driver.get(f'{self.live_server_url}/coleccion/')
-        self.assertIn('coleccion', self.driver.current_url)
+        self.driver.get(f'{self.live_server_url}/collection/')
+        self.assertIn('collection', self.driver.current_url)
 
 
     def test_delete_account_ui_flow(self):
@@ -351,7 +351,7 @@ class GeneralPagesHybridTest(HybridTestBase):
 
     def test_public_pages_backend(self):
         """Test public pages access using Django client"""
-        pages = ['/', '/como-jugar/']
+        pages = ['/', '/how-to-play/']
         for page in pages:
             response = self.client.get(page)
             self.assertEqual(response.status_code, 200)
@@ -361,10 +361,10 @@ class GeneralPagesHybridTest(HybridTestBase):
         self.driver.get(f'{self.live_server_url}/')
         self.assertIn('home', self.driver.title.lower())
 
-    def test_como_jugar_ui(self):
-        """Test como jugar page through browser"""
-        self.driver.get(f'{self.live_server_url}/como-jugar/')
-        self.assertIn('como-jugar', self.driver.current_url)
+    def test_how_to_play_ui(self):
+        """Test how to play page through browser"""
+        self.driver.get(f'{self.live_server_url}/how-to-play/')
+        self.assertIn('how-to-play', self.driver.current_url)
 
     def test_authenticated_pages_backend(self):
         """Test authenticated pages using Django client"""

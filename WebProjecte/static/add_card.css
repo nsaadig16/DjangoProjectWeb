@@ -1,4 +1,4 @@
-/* Variables base para colores y estilos */
+/* Base variables for colors and styles */
 :root {
   --primary-color: #007bff;
   --secondary-color: #6c757d;
@@ -24,7 +24,7 @@ body {
 }
 
 
-/* Cabecera del formulario */
+/* Form header */
 h2 {
   font-size: 24px;
   font-weight: bold;
@@ -35,7 +35,7 @@ h2 {
   padding-bottom: 10px;
 }
 
-/* Estilo del formulario */
+/* Form styles */
 form {
   display: flex;
   flex-direction: column;
@@ -62,7 +62,7 @@ textarea {
   height: 100px;
 }
 
-/* Botón de enviar */
+/* Submit button */
 button {
   padding: 12px 20px;
   font-size: 16px;

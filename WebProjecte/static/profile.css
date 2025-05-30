@@ -1,4 +1,4 @@
-/* Variables base para colores y estilos */
+/* Base variables for colors and styles */
 :root {
   --primary-color: #3f51b5;
   --accent-color: #dc3545;
@@ -12,7 +12,7 @@
   --border-radius: 8px;
 }
 
-/* Estilos generales */
+/* General styles */
 body {
   font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   background-color: var(--light-gray);
@@ -31,7 +31,7 @@ body.dark-mode .container {
   background-color: #1e1e1e;
 }
 
-/* Cabecera del perfil */
+/* Profile header */
 h2 {
   font-weight: 600;
   color: var(--primary-color);
@@ -46,7 +46,7 @@ body.dark-mode h2 {
   border-bottom-color: var(--dark-gray);
 }
 
-/* Imagen de perfil */
+/* Profile image */
 .profile-image {
   text-align: center;
   margin-bottom: 30px;
@@ -67,7 +67,7 @@ body.dark-mode h2 {
   border-color: var(--primary-color);
 }
 
-/* Estilo de los formularios */
+/* Form styles */
 .profile-form .form-group {
   margin-bottom: 25px;
 }
@@ -113,7 +113,7 @@ body.dark-mode .profile-form input[type="password"] {
   cursor: pointer;
 }
 
-/* Botón de envío */
+/* Submit button */
 .profile-form button {
   background-color: var(--accent-color);
   color: var(--white);
@@ -140,7 +140,7 @@ body.dark-mode .profile-form input[type="password"] {
   transform: translateY(0);
 }
 
-/* Efecto de animación en los campos del formulario */
+/* Animation effect on form fields */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -168,7 +168,7 @@ body.dark-mode .profile-form input[type="password"] {
     animation-delay: 0.3s;
 }
 
-/* Responsividad */
+/* Responsiveness */
 @media (max-width: 768px) {
     .container {
         padding: 20px;

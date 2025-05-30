@@ -5,7 +5,7 @@ Card Collection
 {% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'colection.css' %}">
+<link rel="stylesheet" href="{% static 'collection.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -13,26 +13,26 @@ Card Collection
 <h1>Collection</h1>
 
 <main id="cardContainer" class="card-grid">
-  {% for carta in cartas %}
+  {% for card in cards %}
     <div class="card">
       <div class="card-image-container">
         {% if user.is_authenticated %}
-          {% if carta.tiene %}
-            <img class="card-image" src="{{ carta.image.url }}" alt="Card image">
+          {% if card.has %}
+            <img class="card-image" src="{{ card.image.url }}" alt="Card image">
           {% else %}
             <div class="card-placeholder">
-              <span class="card-name">{{ carta.nombre }}</span>
+              <span class="card-name">{{ card.name }}</span>
             </div>
           {% endif %}
         {% else %}
-          <img class="card-image" src="{{ carta.image.url }}" alt="Card image">
+          <img class="card-image" src="{{ card.image.url }}" alt="Card image">
         {% endif %}
       </div>
     </div>
   {% endfor %}
 </main>
 
-<!-- Modal para mostrar imagen ampliada -->
+<!-- Modal to display enlarged image -->
 <div id="modal" class="modal">
   <span class="close">&times;</span>
   <img class="modal-content" id="modalImage">

@@ -41,9 +41,9 @@ class ProfileUpdateForm(forms.ModelForm):
         if not username:
             return self.instance.user.username
 
-        # Verificar si el nombre de usuario ya existe y no es el usuario actual
+        # Check if the username already exists and is not the current user
         if User.objects.filter(username=username).exclude(id=self.instance.user.id).exists():
-            raise forms.ValidationError('Este nombre de usuario ya está en uso')
+            raise forms.ValidationError('This username is already in use')
 
         return username
 
@@ -58,24 +58,24 @@ def profile_view(request):
     if request.method == 'POST':
         action = request.POST.get('action')
 
-        # Manejar eliminación de cuenta
+        # Manage account deletion
         if action == 'delete_account':
             user = request.user
 
             try:
-                # Eliminar imagen de perfil si existe
+                # Delete the profile image if it exists and is not the default one
                 if hasattr(user, 'profile') and user.profile.profile_image:
                     try:
                         image_path = user.profile.profile_image.path
                         if os.path.exists(image_path) and 'default.jpg' not in image_path:
                             os.remove(image_path)
                     except Exception as e:
-                        print(f"Error al eliminar imagen de perfil: {e}")
+                        print(f"Error when deleting profile image: {e}")
 
-                # Eliminar solicitudes de amistad relacionadas
+                # Delete friend requests related to the user
                 FriendRequest.objects.filter(Q(from_user=user) | Q(to_user=user)).delete()
 
-                # Eliminar colección y cartas del usuario
+                # Delete collection and its cards if they exist
                 try:
                     collection = Collection.objects.get(user=user)
                     CollectionCard.objects.filter(collection=collection).delete()
@@ -83,59 +83,59 @@ def profile_view(request):
                 except Collection.DoesNotExist:
                     pass
 
-                # Cerrar sesión antes de eliminar
+                # Close session and log out the user
                 auth_logout(request)
 
-                # Eliminar el usuario (esto también elimina el perfil por CASCADE)
+                # Delete the user account and profile
                 user.delete()
 
-                messages.success(request, 'Tu cuenta ha sido eliminada exitosamente.')
+                messages.success(request, 'Your account has been successfully deleted.')
                 return redirect('home')
 
             except Exception as e:
-                messages.error(request, f'Error al eliminar la cuenta: {e}')
+                messages.error(request, f'Error on account deletion: {e}')
                 return redirect('profile')
 
-        # Manejar actualización normal del perfil
+        # Handle normal profile update
         form = ProfileUpdateForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             user = request.user
 
-            # Actualizar nombre de usuario si ha cambiado
+            # Update username if it has changed
             username = form.cleaned_data.get('username')
             if username and username != user.username:
                 user.username = username
 
-            # Actualizar contraseña si se proporcionó una nueva
+            # Update password if a new one was provided
             password = form.cleaned_data.get('password')
             if password:
                 user.set_password(password)
-
-            # Verificar si se subió una nueva imagen de perfil o se usó DiceBear
+            
+            # Check if a new profile image was uploaded or DiceBear was used
             has_new_upload = request.FILES.get('profile_image') is not None
             dicebear_url = form.cleaned_data.get('dicebear_url')
-
-            # Manejar actualización de imagen de perfil
+            
+            # Handle profile image update
             if has_new_upload or dicebear_url:
-                # Eliminar imagen anterior si existe y no es la predeterminada
+                # Delete previous image if it exists and is not the default one
                 if profile.profile_image:
                     try:
                         image_path = profile.profile_image.path
                         if os.path.exists(image_path) and 'default.jpg' not in image_path:
                             os.remove(image_path)
                     except Exception as e:
-                        messages.error(request, f"Error al eliminar la imagen anterior: {e}")
-
-                # Nombre consistente para todas las imágenes de perfil
+                        messages.error(request, f"Error deleting previous image: {e}")
+                
+                # Consistent name for all profile images
                 profile_filename = f"profilepic_{user.username}.png"
-
-                # Guardar nueva imagen basada en la fuente
+                
+                # Save new image based on source
                 if dicebear_url:
-                    # Usar DiceBear tiene prioridad sobre la subida manual
+                    # Using DiceBear takes priority over manual upload
                     try:
                         response = requests.get(dicebear_url)
                         if response.status_code == 200:
-                            # Usar siempre el mismo formato de nombre para todas las imágenes
+                            # Always use the same name format for all images
                             profile_filename = f"profilepic_{user.username}.png"
                             profile.profile_image.save(
                                 profile_filename,
@@ -143,10 +143,10 @@ def profile_view(request):
                                 save=False
                             )
                     except Exception as e:
-                        messages.error(request, f"Error al descargar la imagen de perfil: {e}")
+                        messages.error(request, f"Error downloading profile image: {e}")
                 elif has_new_upload:
-                    # Procesar imagen subida manualmente - usar exactamente el mismo nombre
-                    # para mantener consistencia y evitar tener múltiples archivos
+                    # Process manually uploaded image - use exactly the same name
+                    # for consistency and to avoid having multiple files
                     uploaded_image = request.FILES['profile_image']
                     profile_filename = f"profilepic_{user.username}.png"
                     profile.profile_image.save(
@@ -154,16 +154,16 @@ def profile_view(request):
                         uploaded_image,
                         save=False
                     )
-
-                # Limpiar el campo del formulario para evitar guardar dos veces
+                
+                # Clear form field to avoid saving twice
                 form.cleaned_data['profile_image'] = None
 
             user.save()
             profile = form.save()
-
-            messages.success(request, 'Tu perfil ha sido actualizado correctamente.')
-
-            # Si se cambió la contraseña, volver a iniciar sesión
+            
+            messages.success(request, 'Your profile has been successfully updated.')
+            
+            # If password was changed, log in again
             if password:
                 return redirect('login')
 
@@ -192,25 +192,27 @@ def register(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)  # Autenticar al usuario después del registro
-            return redirect("home")  # Redirigir a la página principal
+            login(request, user)  # Authenticate the user after registration
+            return redirect("home")  # Redirect to the main page
     else:
         form = CustomUserCreationForm()
 
     return render(request, "register.html", {"form": form})
 
 
-def como_jugar(request):
-    return render(request, 'como_jugar.html')
+def how_to_play(request):
+    return render(request, 'how_to_play.html')
 
-def api_cartas(request):
-    cartas = Card.objects.select_related('rarity')
+def api_cards(request):
+    cards = Card.objects.select_related('rarity')
     data = [{
-        'nombre': carta.title,
-        'imagen': carta.image.url,
-        'texto': carta.description,
-        'tipo': carta.rarity.title
-    } for carta in cartas]
+        'name': card.title,
+        'image': card.image.url,
+        'text': card.description,
+        'power': getattr(card, 'power', '?'),
+        'cost': getattr(card, 'cost', 0),
+        'type': card.rarity.title
+    } for card in cards]
     return JsonResponse(data, safe=False)
 @login_required
 def user_cards_api(request):
@@ -219,11 +221,11 @@ def user_cards_api(request):
 
     data = [
         {
-            'nombre': cc.card.title,
-            'texto': cc.card.description,
-            'imagen': cc.card.image.url,
-            'tipo': cc.card.card_set.title,
-            'rareza': cc.card.rarity.title if hasattr(cc.card, 'rarity') else '',
+            'name': cc.card.title,
+            'text': cc.card.description,
+            'image': cc.card.image.url,
+            'type': cc.card.card_set.title,
+            'rarity': cc.card.rarity.title if hasattr(cc.card, 'rarity') else '',
         }
         for cc in user_cards
     ]
@@ -347,26 +349,26 @@ def refresh_avatar(request):
         return redirect('profile')
     return render(request, 'profile.html')
 
-def coleccion_view(request):
-    cartas_usuario_ids = set()
+def collection_view(request):
+    user_cards_ids = set()
 
     if request.user.is_authenticated:
         try:
             collection = Collection.objects.get(user=request.user)
-            cartas_usuario_ids = set(
+            user_cards_ids = set(
                 CollectionCard.objects.filter(collection=collection).values_list('card_id', flat=True)
             )
         except Collection.DoesNotExist:
-            # Si el usuario no tiene colección, simplemente deja la lista vacía
+            # If the user does not have a collection, we can skip this part
             pass
 
-    cartas = []
-    for carta in Card.objects.all().order_by('id'):
-        cartas.append({
-            'id': carta.id,
-            'nombre': carta.title,
-            'image': carta.image,
-            'tiene': carta.id in cartas_usuario_ids
+    cards = []
+    for card in Card.objects.all().order_by('id'):
+        cards.append({
+            'id': card.id,
+            'name': card.title,
+            'image': card.image,
+            'has': card.id in user_cards_ids
         })
 
-    return render(request, 'coleccion.html', {'cartas': cartas})
+    return render(request, 'collection.html', {'cards': cards})
