@@ -6,10 +6,19 @@
     <h1>Open a Pack: {{ card_set.title }}</h1>
     <form method="post">
         {% csrf_token %}
-        <button type="submit" style="border: none; background: none; padding: 0;">
-            <img src="{{ card_set.image.url }}" alt="Open Pack" style="width: 220px; height: auto; cursor: pointer;">
+        <button 
+            type="submit" 
+            style="border: none; background: none; padding: 0; cursor: pointer;" 
+            aria-label="Open a pack of {{ card_set.title }}"
+            {% if packs_available == 0 %}disabled style="cursor: not-allowed;"{% endif %}
+        >
+            <img src="{{ card_set.image.url }}" alt="Open Pack" style="width: 220px; height: auto;">
         </button>
     </form>
-    <p>You have {{ packs_available }} packs available. One pack is regenerated every 4 hours (maximum of 2).</p>
+    <p>You have {{ packs_available }} pack{{ packs_available|pluralize }} available.</p>
+    <p>One pack is regenerated every 4 hours (maximum of 2).</p>
+    {% if packs_available == 0 %}
+        <p class="text-danger">No packs available to open right now. Please check back later!</p>
+    {% endif %}
 </div>
 {% endblock %}

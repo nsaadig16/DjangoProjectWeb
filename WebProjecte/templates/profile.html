@@ -6,28 +6,28 @@
     <link rel="stylesheet" href="{% static 'profile.css' %}">
         <title></title>
     </head>
-<div class="container mt-4 profile-container">
+<div class="container mt-4 profile-container" vocab="http://schema.org/" typeof="Person" resource="#profile">
     <h2 class="mb-4">User Profile</h2>
 
     <div class="row">
         <div class="col-md-4 profile-image text-center mb-4">
             {% if profile.profile_image %}
-                <img src="{{ profile.profile_image.url }}" alt="Profile image" class="img-thumbnail profile-pic" id="profile-preview">
+                <img src="{{ profile.profile_image.url }}" alt="Profile image" class="img-thumbnail profile-pic" id="profile-preview" property="image">
             {% else %}
-                <img src="{% static 'default.jpg' %}" alt="Profile image" class="img-thumbnail profile-pic" id="profile-preview">
+                <img src="{% static 'default.jpg' %}" alt="Profile image" class="img-thumbnail profile-pic" id="profile-preview" property="image">
             {% endif %}
             <button type="button" id="random-avatar-btn" class="btn btn-info mt-3">Generate random avatar</button>
         </div>
 
         <div class="col-md-8">
-            <form method="POST" enctype="multipart/form-data" class="profile-form">
+            <form method="POST" enctype="multipart/form-data" class="profile-form" about="#profile">
                 {% csrf_token %}
                 
                 <input type="hidden" name="dicebear_url" id="dicebear-url-input">
 
                 <div class="form-group mb-3">
                     <label for="username" class="form-label">Username:</label>
-                    <input type="text" class="form-control" name="username" id="username" value="{{ profile.user.username }}" required>
+                    <input type="text" class="form-control" name="username" id="username" value="{{ profile.user.username }}" required property="name">
                 </div>
 
                 <div class="form-group mb-3">

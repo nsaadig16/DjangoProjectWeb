@@ -4,22 +4,38 @@
 
 {% block content %}
 <div class="container d-flex justify-content-center align-items-center mt-5">
-    <form method="POST" class="form">
+    <form method="POST" class="form" aria-label="Sign in form" novalidate>
         {% csrf_token %}
         <p class="title">Sign in</p>
 
         <label>
-            <input class="input" type="text" name="username" placeholder="" required="">
+            <input 
+                class="input" 
+                type="text" 
+                name="username" 
+                placeholder="" 
+                required 
+                autocomplete="username"
+                value="{{ form.data.username|default_if_none:'' }}"
+                aria-describedby="usernameHelp"
+            >
             <span>Username</span>
         </label>
 
         <label>
-            <input class="input" type="password" name="password" placeholder="" required="">
+            <input 
+                class="input" 
+                type="password" 
+                name="password" 
+                placeholder="" 
+                required 
+                autocomplete="current-password"
+            >
             <span>Password</span>
         </label>
 
         {% if form.non_field_errors %}
-        <div class="error">
+        <div class="error alert alert-danger" role="alert" aria-live="assertive">
             {% for error in form.non_field_errors %}
             <p>{{ error }}</p>
             {% endfor %}
@@ -27,7 +43,11 @@
         {% endif %}
 
         <button class="submit" type="submit">Submit</button>
-        <p class="register">Don't have an account? <a href="{% url 'register' %}">Sign up here</a></p>
+
+        <p class="register mt-3">Don't have an account? <a href="{% url 'register' %}">Sign up here</a></p>
+
+        <!-- Optional forgot password -->
+        <p><a href="{% url 'password_reset' %}">Forgot your password?</a></p>
     </form>
 </div>
 {% endblock %}

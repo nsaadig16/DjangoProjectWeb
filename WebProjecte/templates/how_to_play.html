@@ -4,30 +4,39 @@
 {% block title %}How to Play - TCG{% endblock %}
 
 {% block content %}
-<div class="container text-center">
+<div class="container text-center" role="main">
     <h1 class="mt-4">HOW TO PLAY</h1>
     <p class="lead">Discover how to collect and trade cards in our TCG.</p>
 
-    <section class="mt-5">
+    <nav aria-label="How to play navigation" class="mb-4">
+        <ul class="list-inline">
+            <li class="list-inline-item"><a href="#collection">Card Collection</a></li>
+            <li class="list-inline-item"><a href="#rarities">Rarities</a></li>
+            <li class="list-inline-item"><a href="#trading">Card Trading</a></li>
+            <li class="list-inline-item"><a href="#expansions">Expansions and Updates</a></li>
+        </ul>
+    </nav>
+
+    <section id="collection" class="mt-5" aria-labelledby="collection-title">
         <div class="row align-items-center">
             <div class="col-md-6">
-                <img src="{% static 'how_to_play_1.png' %}" alt="Collection cards" class="img-fluid mb-3">
+                <img src="{% static 'how_to_play_1.png' %}" alt="Players collecting cards illustration" class="img-fluid mb-3">
             </div>
             <div class="col-md-6">
-                <h2>Card Collection</h2>
+                <h2 id="collection-title">Card Collection</h2>
                 <p>Cards are divided into different rarities and can be collected to build the perfect deck.</p>
             </div>
         </div>
     </section>
 
-    <section class="mt-5 bg-light py-4">
+    <section id="rarities" class="mt-5 bg-light py-4" aria-labelledby="rarities-title">
         <div class="row align-items-center">
             <div class="col-md-6 order-md-2">
-                <img src="{% static 'how_to_play_2.png' %}" alt="Rarities" class="img-fluid mb-3">
+                <img src="{% static 'how_to_play_2.png' %}" alt="Card rarities icon set" class="img-fluid mb-3">
             </div>
             <div class="col-md-6 order-md-1">
-                <h2>Rarities</h2>
-                <ul class="text-start">
+                <h2 id="rarities-title">Rarities</h2>
+                <ul class="text-start" aria-describedby="rarities-description">
                     <li><strong>Common:</strong> Easy to find in packs.</li>
                     <li><strong>Rare:</strong> Harder to obtain, with unique abilities.</li>
                     <li><strong>Epic:</strong> Powerful and valuable cards.</li>
@@ -37,13 +46,13 @@
         </div>
     </section>
 
-    <section class="mt-5">
+    <section id="trading" class="mt-5" aria-labelledby="trading-title">
         <div class="row align-items-center">
             <div class="col-md-6">
-                <img src="{% static 'how_to_play_3.png' %}" alt="Trading" class="img-fluid mb-3">
+                <img src="{% static 'how_to_play_3.png' %}" alt="Players trading cards" class="img-fluid mb-3">
             </div>
             <div class="col-md-6">
-                <h2>Card Trading</h2>
+                <h2 id="trading-title">Card Trading</h2>
                 <p>Players can trade cards with others to complete their collection.</p>
                 <ul class="text-start">
                     <li>Find players with cards you need.</li>
@@ -55,13 +64,13 @@
         </div>
     </section>
 
-    <section class="mt-5 bg-light py-4">
+    <section id="expansions" class="mt-5 bg-light py-4" aria-labelledby="expansions-title">
         <div class="row align-items-center">
             <div class="col-md-6 order-md-2">
-                <img src="{% static 'how_to_play_4.png' %}" alt="Next expansions" class="img-fluid mb-3">
+                <img src="{% static 'how_to_play_4.png' %}" alt="Upcoming card expansions illustration" class="img-fluid mb-3">
             </div>
             <div class="col-md-6 order-md-1">
-                <h2>Expansions and Updates</h2>
+                <h2 id="expansions-title">Expansions and Updates</h2>
                 <p>New expansions are regularly released with unique cards and innovative mechanics.</p>
                 <ul class="text-start">
                     <li>Stay tuned for new sets.</li>
@@ -73,5 +82,7 @@
     </section>
 
     <p class="mt-4">Start your collection today and become a TCG master!</p>
+
+    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'});" class="btn btn-secondary mt-4" aria-label="Back to top">Back to Top</button>
 </div>
 {% endblock %}

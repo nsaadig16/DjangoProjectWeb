@@ -1,14 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}Add Card{% endblock %}
+
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'add_card.css' %}">
 {% endblock %}
+
 {% block content %}
-    <head>
-    {% load static %}
-        <title></title>
-    </head>
 <div class="container">
     <h2>Add Card</h2>
     <form method="post" enctype="multipart/form-data">

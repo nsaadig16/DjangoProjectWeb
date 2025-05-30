@@ -3,10 +3,11 @@
 
 {% block content %}
 <h1 class="text-center">Select a Pack to Open</h1>
-<div class="card-grid">
+<div class="card-grid" vocab="http://schema.org/" typeof="Collection">
   {% for set in card_sets %}
-    <a href="{% url 'open_pack' set.id %}" class="card-item">
-      <img class="card-image" src="{{ set.image.url }}" alt="{{ set.title }}" style="width: 220px; height: auto; cursor: pointer;">
+    <a href="{% url 'open_pack' set.id %}" class="card-item" typeof="Product" resource="#set-{{ set.id }}">
+      <img class="card-image" src="{{ set.image.url }}" alt="{{ set.title }}" style="width: 220px; height: auto; cursor: pointer;" property="image">
+      <span property="name" class="d-none">{{ set.title }}</span>
     </a>
   {% endfor %}
 </div>
