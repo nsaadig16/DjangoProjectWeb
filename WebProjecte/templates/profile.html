@@ -45,8 +45,61 @@
                     <small id="file-selected" class="form-text text-muted">No file selected</small>
                 </div>
 
-                <button type="submit" class="btn btn-primary w-100">Update Data</button>
+                <button type="submit" class="btn btn-primary w-100 mb-3">Update Data</button>
             </form>
+
+            <!-- Account deletion section -->
+            <div class="card border-danger mt-4">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">⚠️ Danger Zone</h5>
+                </div>
+                <div class="card-body">
+                    <h6 class="card-title text-danger">Delete Account</h6>
+                    <p class="card-text text-muted">
+                        This action will permanently delete your account and all associated data.
+                        <strong>This action can't be undone</strong>
+                    </p>
+                    <button type="button" class="btn btn-outline-danger" id="delete-account-btn">
+                        🗑️ Delete my account
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Account deletion confirmation modal -->
+<div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteAccountModalLabel">⚠️ Confirm Account Deletion</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning">
+                    <strong>WARNING!</strong> This action is irreversible.
+                </div>
+                <p>You are about to permanently delete your account. This includes:</p>
+                <ul>
+                    <li>Your user profile</li>
+                    <li>Your collected cards. (All that work collecting them and you're throwing it away?)</li>
+                    <li>Your friendships. (Seriously, aren't you thinking about your friends?)</li>
+                </ul>
+                <p class="text-danger"><strong>To confirm, type your username:</strong></p>
+                <input type="text" class="form-control" id="confirm-username" placeholder="Type your username">
+                <small class="form-text text-muted">Current user: <strong>{{ profile.user.username }}</strong></small>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form method="POST" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="delete_account">
+                    <button type="submit" class="btn btn-danger" id="confirm-delete-btn" disabled>
+                        Delete Account Permanently
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
@@ -63,7 +116,7 @@
         const randomAvatarBtn = document.getElementById('random-avatar-btn');
         const dicebearUrlInput = document.getElementById('dicebear-url-input');
         const profilePreview = document.getElementById('profile-preview');
-        
+
         randomAvatarBtn.addEventListener('click', function() {
             // Generate a random seed
             const seed = Math.random().toString(36).substring(2, 15);
@@ -85,6 +138,41 @@
             document.getElementById('profile_image').value = '';
             document.getElementById('file-selected').textContent = 'No file selected';
         });
+
+        // Script to manage account deletion
+        const deleteAccountBtn = document.getElementById('delete-account-btn');
+        const deleteModal = new bootstrap.Modal(document.getElementById('deleteAccountModal'));
+        const confirmUsernameInput = document.getElementById('confirm-username');
+        const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+        const currentUsername = '{{ profile.user.username }}';
+
+        // Show modal on delete account button click
+        deleteAccountBtn.addEventListener('click', function() {
+            deleteModal.show();
+        });
+
+        // Validate username input to enable confirmation button
+        confirmUsernameInput.addEventListener('input', function() {
+            const enteredUsername = this.value.trim();
+            if (enteredUsername === currentUsername) {
+                confirmDeleteBtn.disabled = false;
+                confirmDeleteBtn.classList.remove('btn-secondary');
+                confirmDeleteBtn.classList.add('btn-danger');
+            } else {
+                confirmDeleteBtn.disabled = true;
+                confirmDeleteBtn.classList.remove('btn-danger');
+                confirmDeleteBtn.classList.add('btn-secondary');
+            }
+        });
+
+        // Clear input on modal close
+        document.getElementById('deleteAccountModal').addEventListener('hidden.bs.modal', function() {
+            confirmUsernameInput.value = '';
+            confirmDeleteBtn.disabled = true;
+            confirmDeleteBtn.classList.remove('btn-danger');
+            confirmDeleteBtn.classList.add('btn-secondary');
+        });
+
     });
 </script>
 {% endblock %}

@@ -18,6 +18,9 @@ from .models import Card, CollectionCard, Collection ,CardSet , UserCard
 import os
 import requests
 from django.core.files.base import ContentFile
+from .models import PackStatus
+from django.utils import timezone
+
 # Create your views here.
 
 def home(request):
@@ -53,6 +56,47 @@ def profile_view(request):
         profile = Profile.objects.create(user=request.user)
 
     if request.method == 'POST':
+        action = request.POST.get('action')
+
+        # Manage account deletion
+        if action == 'delete_account':
+            user = request.user
+
+            try:
+                # Delete the profile image if it exists and is not the default one
+                if hasattr(user, 'profile') and user.profile.profile_image:
+                    try:
+                        image_path = user.profile.profile_image.path
+                        if os.path.exists(image_path) and 'default.jpg' not in image_path:
+                            os.remove(image_path)
+                    except Exception as e:
+                        print(f"Error when deleting profile image: {e}")
+
+                # Delete friend requests related to the user
+                FriendRequest.objects.filter(Q(from_user=user) | Q(to_user=user)).delete()
+
+                # Delete collection and its cards if they exist
+                try:
+                    collection = Collection.objects.get(user=user)
+                    CollectionCard.objects.filter(collection=collection).delete()
+                    collection.delete()
+                except Collection.DoesNotExist:
+                    pass
+
+                # Close session and log out the user
+                auth_logout(request)
+
+                # Delete the user account and profile
+                user.delete()
+
+                messages.success(request, 'Your account has been successfully deleted.')
+                return redirect('home')
+
+            except Exception as e:
+                messages.error(request, f'Error on account deletion: {e}')
+                return redirect('profile')
+
+        # Handle normal profile update
         form = ProfileUpdateForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             user = request.user
@@ -122,7 +166,7 @@ def profile_view(request):
             # If password was changed, log in again
             if password:
                 return redirect('login')
-                
+
             return redirect('profile')
     else:
         form = ProfileUpdateForm(instance=profile)
@@ -132,7 +176,6 @@ def profile_view(request):
         'form': form,
     }
     return render(request, 'profile.html', context)
-
 
 @login_required
 def my_view(request):
@@ -258,12 +301,36 @@ def reject_friend_request(request, request_id):
 @login_required
 def open_pack_view(request, set_id):
     card_set = get_object_or_404(CardSet, pk=set_id)
+    status, _ = PackStatus.objects.get_or_create(user=request.user)
+    status.update_packs()
 
     if request.method == 'POST':
-        cards = open_pack(request.user, card_set.id)
-        return render(request, 'pack_opened.html', {'cards': cards})
+        if status.packs_available > 0:
+            status.packs_available -= 1
+            status.last_opened = timezone.now()
+            status.save()
 
-    return render(request, 'open_pack.html', {'card_set': card_set})
+            collection = Collection.objects.get(user=request.user)
+            owned_card_ids = set(CollectionCard.objects.filter(collection=collection).values_list('card_id', flat=True))
+
+            cards = open_pack(request.user, card_set.id)
+
+            cards_with_status = []
+            for card in cards:
+                is_new = card.id not in owned_card_ids
+                cards_with_status.append({'card': card, 'is_new': is_new})
+
+            return render(request, 'pack_opened.html', {
+                'cards_with_status': cards_with_status
+            })
+        else:
+            messages.error(request, 'You have no packs available. Please wait for regeneration.')
+            return redirect('open_pack', set_id=set_id)
+
+    return render(request, 'open_pack.html', {
+        'card_set': card_set,
+        'packs_available': status.packs_available
+    })
 
 @login_required
 def pack_selector_view(request):
@@ -283,12 +350,17 @@ def refresh_avatar(request):
     return render(request, 'profile.html')
 
 def collection_view(request):
-    collection = Collection.objects.get(user=request.user)
+    user_cards_ids = set()
 
-
-    user_cards_ids = set(
-        CollectionCard.objects.filter(collection=collection).values_list('card_id', flat=True)
-    )
+    if request.user.is_authenticated:
+        try:
+            collection = Collection.objects.get(user=request.user)
+            user_cards_ids = set(
+                CollectionCard.objects.filter(collection=collection).values_list('card_id', flat=True)
+            )
+        except Collection.DoesNotExist:
+            # If the user does not have a collection, we can skip this part
+            pass
 
     cards = []
     for card in Card.objects.all().order_by('id'):

@@ -16,12 +16,16 @@ Card Collection
   {% for card in cards %}
     <div class="card">
       <div class="card-image-container">
-        {% if card.has %}
-          <img class="card-image" src="{{ card.image.url }}" alt="Card image">
+        {% if user.is_authenticated %}
+          {% if card.has %}
+            <img class="card-image" src="{{ card.image.url }}" alt="Card image">
+          {% else %}
+            <div class="card-placeholder">
+              <span class="card-name">{{ card.name }}</span>
+            </div>
+          {% endif %}
         {% else %}
-          <div class="card-placeholder">
-            <span class="card-name">{{ card.name }}</span>
-          </div>
+          <img class="card-image" src="{{ card.image.url }}" alt="Card image">
         {% endif %}
       </div>
     </div>

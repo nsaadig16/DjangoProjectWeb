@@ -4,7 +4,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from WebProjecte.services.profile_image import generate_avatar
 from django.utils import timezone
-
+from datetime import timedelta
 
 class Collection(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -99,9 +99,24 @@ def create_user_profile_and_collection(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
         Collection.objects.create(user=instance)
+        PackStatus.objects.create(user=instance)
         generate_avatar(instance)  # Avatar generation via API
 
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
+
+class PackStatus(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    last_opened = models.DateTimeField(default=timezone.now)
+    packs_available = models.IntegerField(default=2)
+
+    def update_packs(self):
+        now = timezone.now()
+        elapsed = now - self.last_opened
+        new_packs = int(elapsed.total_seconds() // (4 * 3600))  # cada 4 horas
+        if new_packs > 0:
+            self.packs_available = min(2, self.packs_available + new_packs)
+            self.last_opened += timedelta(hours=4 * new_packs)
+            self.save()
