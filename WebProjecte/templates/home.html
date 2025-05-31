@@ -4,34 +4,39 @@
 
 {% block content %}
 <div class="container text-center mt-5">
+
     {% if user.is_authenticated %}
         <h1 class="mb-3">Welcome, {{ user.username }}!</h1>
         <p class="mb-4">Explore the world of collectible cards. What would you like to do today?</p>
 
-        <div class="mb-4">
+        <section class="mb-4">
             <h4>Open Card Packs</h4>
             <p>Discover new cards for your collection by opening mystery packs!</p>
-            <a href="{% url 'select_pack' %}" class="btn btn-success mt-2">Open Packs</a>
-        </div>
+            <a href="{% url 'select_pack' %}" class="btn btn-success mt-2" aria-label="Open card packs">Open Packs</a>
+        </section>
 
-        <div class="mb-4">
-            <h4>Upload Your Own Cards</h4>
-            <p>This feature is coming soon. Stay tuned!</p>
-            <button class="btn btn-warning mt-2" disabled>Upload Cards (Coming Soon)</button>
-        </div>
+        <section class="mb-4">
+            <h4>Upload Your Own Card</h4>
+            <p>Create and upload your own card to personalize your collection!</p>
+            <a href="{% url 'add_card' %}" class="btn btn-warning mt-2" aria-label="Upload a new card">Upload Card</a>
+        </section>
 
     {% else %}
         <h1 class="mb-3">Welcome to TCG</h1>
         <p class="mb-3">Create an account and start your adventure in the world of collectible cards.</p>
-        <div class="mb-4">
-            <a href="{% url 'login' %}" class="btn btn-primary me-2">Log In</a>
-            <a href="{% url 'register' %}" class="btn btn-dark">Register</a>
-        </div>
-        <p class="mt-4 text-white">Click here to view all available cards...</p>
-         <div class="mb-4">
-            <a href="{% url 'coleccion' %}" class="btn btn-dark">View Cards</a>
-        </div>
+
+        <section class="mb-4">
+            <a href="{% url 'login' %}" class="btn btn-primary me-2" aria-label="Log in to your account">Log In</a>
+            <a href="{% url 'register' %}" class="btn btn-dark" aria-label="Register a new account">Register</a>
+        </section>
+
+        <section class="mb-4">
+            <p>Click here to view all available cards...</p>
+            <a href="{% url 'collection' %}" class="btn btn-dark" aria-label="View all cards">View Cards</a>
+        </section>
+
         <p>By signing up, you'll be able to open packs, upload cards, build your deck, and compete with other players.</p>
     {% endif %}
+
 </div>
 {% endblock %}

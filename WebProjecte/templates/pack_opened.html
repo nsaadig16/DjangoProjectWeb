@@ -5,13 +5,49 @@
 <div class="text-center">
     <h1>You have obtained these cards!</h1>
     <div class="row mt-4">
-        {% for card in cards %}
+        {% for item in cards_with_status %}
             <div class="col-md-4 mb-4">
-                <div class="card">
-                    <img src="{{ card.image.url }}" class="card-img-top" alt="{{ card.title }}">
+                <div class="card position-relative shadow-sm p-2">
+                    <img src="{{ item.card.image.url }}" class="card-img-top" alt="{{ item.card.title }} card">
+                    {% if item.is_new %}
+                        <span class="badge-new">NEW</span>
+                    {% endif %}
                 </div>
             </div>
         {% endfor %}
     </div>
 </div>
+
+<style>
+.badge-new {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #e63946;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1rem;
+    box-shadow: 0 0 8px rgba(230, 57, 70, 0.7);
+    animation: pulse 1.5s infinite;
+    user-select: none;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 8px rgba(230, 57, 70, 0.7);
+    }
+    50% {
+        transform: scale(1.1);
+        box-shadow: 0 0 15px rgba(230, 57, 70, 1);
+    }
+}
+
+.card {
+    border-radius: 12px;
+    overflow: hidden;
+}
+</style>
 {% endblock %}

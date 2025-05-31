@@ -1,4 +1,5 @@
 # TGC UdL
+
 **TGC UdL** (Trading Card Game UdL) is a web application built with Django and Tailwind CSS that allows users to collect and trade digital cards featuring professors from the University of Lleida (UdL). It's a fun and gamified way to engage with the academic environment.
 
 ---
@@ -35,6 +36,7 @@ Coming soon...
 - [Poetry](https://python-poetry.org/)
 
 ---
+
 ## 🔧 Installation
 
 ### 🐳 Using Docker
@@ -46,11 +48,13 @@ git clone https://github.com/nsaadig16/DjangoProjectWeb.git
 ```
 
 2. Navigate to the project directory:
+
 ```bash
 cd DjangoProjectWeb
 ```
 
 3. Build and run the Docker container:
+
 ```bash
 docker-compose up --build
 ```
@@ -66,22 +70,26 @@ git clone https://github.com/nsaadig16/DjangoProjectWeb.git
 ```
 
 2. Navigate to the project directory:
+
 ```bash
 cd DjangoProjectWeb
 ```
 
-3. Create a virtual enviorentment (OPTIONAL)
+3. Create a virtual environment (OPTIONAL)
+
 ```bash
 python -m venv venv
 source venv/bin/activate
 ```
 
 4. Install the project dependencies:
+
 ```bash
 poetry install
 ```
 
 5. Make migrations:
+
 ```bash
 poetry run python manage.py makemigrations
 poetry run python manage.py migrate

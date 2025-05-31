@@ -6,85 +6,173 @@
     <link rel="stylesheet" href="{% static 'profile.css' %}">
         <title></title>
     </head>
-<div class="container mt-4 profile-container">
-    <h2 class="mb-4">Perfil de Usuario</h2>
+<div class="container mt-4 profile-container" vocab="http://schema.org/" typeof="Person" resource="#profile">
+    <h2 class="mb-4">User Profile</h2>
 
     <div class="row">
         <div class="col-md-4 profile-image text-center mb-4">
             {% if profile.profile_image %}
-                <img src="{{ profile.profile_image.url }}" alt="Imagen de perfil" class="img-thumbnail profile-pic" id="profile-preview">
+                <img src="{{ profile.profile_image.url }}" alt="Profile image" class="img-thumbnail profile-pic" id="profile-preview" property="image">
             {% else %}
-                <img src="{% static 'default.jpg' %}" alt="Imagen de perfil" class="img-thumbnail profile-pic" id="profile-preview">
+                <img src="{% static 'default.jpg' %}" alt="Profile image" class="img-thumbnail profile-pic" id="profile-preview" property="image">
             {% endif %}
-            <button type="button" id="random-avatar-btn" class="btn btn-info mt-3">Generar avatar aleatorio</button>
+            <button type="button" id="random-avatar-btn" class="btn btn-info mt-3">Generate random avatar</button>
         </div>
 
         <div class="col-md-8">
-            <form method="POST" enctype="multipart/form-data" class="profile-form">
+            <form method="POST" enctype="multipart/form-data" class="profile-form" about="#profile">
                 {% csrf_token %}
                 
                 <input type="hidden" name="dicebear_url" id="dicebear-url-input">
 
                 <div class="form-group mb-3">
-                    <label for="username" class="form-label">Usuario:</label>
-                    <input type="text" class="form-control" name="username" id="username" value="{{ profile.user.username }}" required>
+                    <label for="username" class="form-label">Username:</label>
+                    <input type="text" class="form-control" name="username" id="username" value="{{ profile.user.username }}" required property="name">
                 </div>
 
                 <div class="form-group mb-3">
-                    <label for="password" class="form-label">Nueva Contraseña:</label>
+                    <label for="password" class="form-label">New Password:</label>
                     <input type="password" class="form-control" name="password" id="password">
-                    <small class="form-text text-muted">Deja este campo en blanco si no deseas cambiar tu contraseña.</small>
+                    <small class="form-text text-muted">Leave this field blank if you don't want to change your password.</small>
                 </div>
 
                 <div class="form-group mb-4">
-                    <label for="profile_image" class="form-label">Imagen de Perfil:</label>
+                    <label for="profile_image" class="form-label">Profile Image:</label>
                     <div class="input-group">
                         <input type="file" class="form-control" name="profile_image" id="profile_image" accept="image/*">
-                        <label class="input-group-text" for="profile_image">Seleccionar archivo</label>
+                        <label class="input-group-text" for="profile_image">Select file</label>
                     </div>
-                    <small id="file-selected" class="form-text text-muted">Ningún archivo seleccionado</small>
+                    <small id="file-selected" class="form-text text-muted">No file selected</small>
                 </div>
 
-                <button type="submit" class="btn btn-primary w-100">Actualizar Datos</button>
+                <button type="submit" class="btn btn-primary w-100 mb-3">Update Data</button>
             </form>
+
+            <!-- Account deletion section -->
+            <div class="card border-danger mt-4">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">⚠️ Danger Zone</h5>
+                </div>
+                <div class="card-body">
+                    <h6 class="card-title text-danger">Delete Account</h6>
+                    <p class="card-text text-muted">
+                        This action will permanently delete your account and all associated data.
+                        <strong>This action can't be undone</strong>
+                    </p>
+                    <button type="button" class="btn btn-outline-danger" id="delete-account-btn">
+                        🗑️ Delete my account
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Account deletion confirmation modal -->
+<div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteAccountModalLabel">⚠️ Confirm Account Deletion</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning">
+                    <strong>WARNING!</strong> This action is irreversible.
+                </div>
+                <p>You are about to permanently delete your account. This includes:</p>
+                <ul>
+                    <li>Your user profile</li>
+                    <li>Your collected cards. (All that work collecting them and you're throwing it away?)</li>
+                    <li>Your friendships. (Seriously, aren't you thinking about your friends?)</li>
+                </ul>
+                <p class="text-danger"><strong>To confirm, type your username:</strong></p>
+                <input type="text" class="form-control" id="confirm-username" placeholder="Type your username">
+                <small class="form-text text-muted">Current user: <strong>{{ profile.user.username }}</strong></small>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form method="POST" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="delete_account">
+                    <button type="submit" class="btn btn-danger" id="confirm-delete-btn" disabled>
+                        Delete Account Permanently
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    // Script para mostrar el nombre del archivo seleccionado
+    // Script to display the selected file name
     document.getElementById('profile_image').addEventListener('change', function() {
-        const fileName = this.files[0]?.name || 'Ningún archivo seleccionado';
+        const fileName = this.files[0]?.name || 'No file selected';
         document.getElementById('file-selected').textContent = fileName;
     });
 
-    // Script para generar un avatar aleatorio
+    // Script to generate a random avatar
     document.addEventListener('DOMContentLoaded', function() {
         const randomAvatarBtn = document.getElementById('random-avatar-btn');
         const dicebearUrlInput = document.getElementById('dicebear-url-input');
         const profilePreview = document.getElementById('profile-preview');
-        
+
         randomAvatarBtn.addEventListener('click', function() {
-            // Generar un seed aleatorio
+            // Generate a random seed
             const seed = Math.random().toString(36).substring(2, 15);
             
-            // Estilos disponibles: 'adventurer', 'avataaars', 'bottts', 'initials', 'micah', etc.
+            // Available styles: 'adventurer', 'avataaars', 'bottts', 'initials', 'micah', etc.
             const styles = ['adventurer', 'avataaars', 'bottts', 'fun-emoji', 'pixel-art', 'identicon', 'thumbs'];
             const style = styles[Math.floor(Math.random() * styles.length)];
             
-            // Generar URL de DiceBear
+            // Generate DiceBear URL
             const dicebearUrl = `https://api.dicebear.com/7.x/${style}/png?seed=${seed}&backgroundColor=b6e3f4`;
             
-            // Mostrar el avatar en la vista previa
+            // Display the avatar in the preview
             profilePreview.src = dicebearUrl;
             
-            // Guardar la URL en el input oculto
+            // Save the URL in the hidden input
             dicebearUrlInput.value = dicebearUrl;
             
-            // Limpiar el campo de subida de archivo
+            // Clear the file upload field
             document.getElementById('profile_image').value = '';
-            document.getElementById('file-selected').textContent = 'Ningún archivo seleccionado';
+            document.getElementById('file-selected').textContent = 'No file selected';
         });
+
+        // Script to manage account deletion
+        const deleteAccountBtn = document.getElementById('delete-account-btn');
+        const deleteModal = new bootstrap.Modal(document.getElementById('deleteAccountModal'));
+        const confirmUsernameInput = document.getElementById('confirm-username');
+        const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+        const currentUsername = '{{ profile.user.username }}';
+
+        // Show modal on delete account button click
+        deleteAccountBtn.addEventListener('click', function() {
+            deleteModal.show();
+        });
+
+        // Validate username input to enable confirmation button
+        confirmUsernameInput.addEventListener('input', function() {
+            const enteredUsername = this.value.trim();
+            if (enteredUsername === currentUsername) {
+                confirmDeleteBtn.disabled = false;
+                confirmDeleteBtn.classList.remove('btn-secondary');
+                confirmDeleteBtn.classList.add('btn-danger');
+            } else {
+                confirmDeleteBtn.disabled = true;
+                confirmDeleteBtn.classList.remove('btn-danger');
+                confirmDeleteBtn.classList.add('btn-secondary');
+            }
+        });
+
+        // Clear input on modal close
+        document.getElementById('deleteAccountModal').addEventListener('hidden.bs.modal', function() {
+            confirmUsernameInput.value = '';
+            confirmDeleteBtn.disabled = true;
+            confirmDeleteBtn.classList.remove('btn-danger');
+            confirmDeleteBtn.classList.add('btn-secondary');
+        });
+
     });
 </script>
 {% endblock %}
