@@ -3,30 +3,30 @@
 {% block title %}Sign In - TCG{% endblock %}
 
 {% block content %}
-<div class="container d-flex justify-content-center align-items-center mt-5" vocab="http://schema.org/" typeof="WebPage">
-    <form method="POST" class="form" typeof="http://schema.org/LoginAction">
+<div class="container d-flex justify-content-center align-items-center mt-5" itemscope itemtype="http://schema.org/WebPage">
+    <form method="POST" class="form">
         {% csrf_token %}
-        <p class="title" property="name">Sign in</p>
+        <p class="title" itemprop="name">Sign in</p>
 
-        <label for="username">
-            <input class="input" type="text" name="username" id="username" required property="agent" />
+        <label>
+            <input class="input" type="text" name="username" placeholder="" required="" itemprop="identifier">
             <span>Username</span>
         </label>
 
-        <label for="password">
-            <input class="input" type="password" name="password" id="password" required />
+        <label>
+            <input class="input" type="password" name="password" placeholder="" required="">
             <span>Password</span>
         </label>
 
         {% if form.non_field_errors %}
         <div class="error">
             {% for error in form.non_field_errors %}
-            <p property="description">{{ error }}</p>
+            <p itemprop="description">{{ error }}</p>
             {% endfor %}
         </div>
         {% endif %}
 
-        <button class="submit" type="submit" property="target">Submit</button>
+        <button class="submit" type="submit">Submit</button>
         <p class="register">Don't have an account? <a href="{% url 'register' %}">Sign up here</a></p>
     </form>
 </div>
