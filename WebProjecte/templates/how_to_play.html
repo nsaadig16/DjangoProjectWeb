@@ -4,74 +4,74 @@
 {% block title %}How to Play - TCG{% endblock %}
 
 {% block content %}
-<div class="container text-center">
-    <h1 class="mt-4">HOW TO PLAY</h1>
-    <p class="lead">Discover how to collect and trade cards in our TCG.</p>
+<div class="container text-center" vocab="http://schema.org/" typeof="WebPage">
+    <h1 class="mt-4" property="headline">HOW TO PLAY</h1>
+    <p class="lead" property="description">Discover how to collect and trade cards in our TCG.</p>
 
-    <section class="mt-5">
+    <section class="mt-5" typeof="CreativeWork">
         <div class="row align-items-center">
             <div class="col-md-6">
-                <img src="{% static 'how_to_play_1.png' %}" alt="Collection cards" class="img-fluid mb-3">
+                <img src="{% static 'how_to_play_1.png' %}" alt="Collection cards" class="img-fluid mb-3" property="image" />
             </div>
             <div class="col-md-6">
-                <h2>Card Collection</h2>
-                <p>Cards are divided into different rarities and can be collected to build the perfect deck.</p>
+                <h2 property="name">Card Collection</h2>
+                <p property="text">Cards are divided into different rarities and can be collected to build the perfect deck.</p>
             </div>
         </div>
     </section>
 
-    <section class="mt-5 bg-light py-4">
-        <div class="row align-items-center">
-            <div class="col-md-6 order-md-2">
-                <img src="{% static 'how_to_play_2.png' %}" alt="Rarities" class="img-fluid mb-3">
-            </div>
-            <div class="col-md-6 order-md-1">
-                <h2>Rarities</h2>
-                <ul class="text-start">
-                    <li><strong>Common:</strong> Easy to find in packs.</li>
-                    <li><strong>Rare:</strong> Harder to obtain, with unique abilities.</li>
-                    <li><strong>Epic:</strong> Powerful and valuable cards.</li>
-                    <li><strong>Legendary:</strong> The most exclusive cards in the game.</li>
-                </ul>
-            </div>
-        </div>
-    </section>
-
-    <section class="mt-5">
-        <div class="row align-items-center">
-            <div class="col-md-6">
-                <img src="{% static 'how_to_play_3.png' %}" alt="Trading" class="img-fluid mb-3">
-            </div>
-            <div class="col-md-6">
-                <h2>Card Trading</h2>
-                <p>Players can trade cards with others to complete their collection.</p>
-                <ul class="text-start">
-                    <li>Find players with cards you need.</li>
-                    <li>Propose a fair trade based on rarity and value.</li>
-                    <li>Expand your collection and improve your deck.</li>
-                    <li><strong> Available soon!</strong></li>
-                </ul>
-            </div>
-        </div>
-    </section>
-
-    <section class="mt-5 bg-light py-4">
+    <section class="mt-5 bg-light py-4" typeof="CreativeWork">
         <div class="row align-items-center">
             <div class="col-md-6 order-md-2">
-                <img src="{% static 'how_to_play_4.png' %}" alt="Next expansions" class="img-fluid mb-3">
+                <img src="{% static 'how_to_play_2.png' %}" alt="Rarities" class="img-fluid mb-3" property="image" />
             </div>
             <div class="col-md-6 order-md-1">
-                <h2>Expansions and Updates</h2>
-                <p>New expansions are regularly released with unique cards and innovative mechanics.</p>
-                <ul class="text-start">
-                    <li>Stay tuned for new sets.</li>
-                    <li>Discover special limited-edition cards.</li>
-                    <li>Update your deck with the latest strategies.</li>
+                <h2 property="name">Rarities</h2>
+                <ul class="text-start" property="about">
+                    <li><strong property="name">Common:</strong> <span property="description">Easy to find in packs.</span></li>
+                    <li><strong property="name">Rare:</strong> <span property="description">Harder to obtain, with unique abilities.</span></li>
+                    <li><strong property="name">Epic:</strong> <span property="description">Powerful and valuable cards.</span></li>
+                    <li><strong property="name">Legendary:</strong> <span property="description">The most exclusive cards in the game.</span></li>
                 </ul>
             </div>
         </div>
     </section>
 
-    <p class="mt-4">Start your collection today and become a TCG master!</p>
+    <section class="mt-5" typeof="CreativeWork">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <img src="{% static 'how_to_play_3.png' %}" alt="Trading" class="img-fluid mb-3" property="image" />
+            </div>
+            <div class="col-md-6">
+                <h2 property="name">Card Trading</h2>
+                <p property="text">Players can trade cards with others to complete their collection.</p>
+                <ul class="text-start" property="about">
+                    <li property="itemListElement">Find players with cards you need.</li>
+                    <li property="itemListElement">Propose a fair trade based on rarity and value.</li>
+                    <li property="itemListElement">Expand your collection and improve your deck.</li>
+                    <li><strong property="name">Available soon!</strong></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="mt-5 bg-light py-4" typeof="CreativeWork">
+        <div class="row align-items-center">
+            <div class="col-md-6 order-md-2">
+                <img src="{% static 'how_to_play_4.png' %}" alt="Next expansions" class="img-fluid mb-3" property="image" />
+            </div>
+            <div class="col-md-6 order-md-1">
+                <h2 property="name">Expansions and Updates</h2>
+                <p property="text">New expansions are regularly released with unique cards and innovative mechanics.</p>
+                <ul class="text-start" property="about">
+                    <li property="itemListElement">Stay tuned for new sets.</li>
+                    <li property="itemListElement">Discover special limited-edition cards.</li>
+                    <li property="itemListElement">Update your deck with the latest strategies.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <p class="mt-4" property="callToAction">Start your collection today and become a TCG master!</p>
 </div>
 {% endblock %}
