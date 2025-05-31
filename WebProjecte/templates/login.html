@@ -4,30 +4,30 @@
 
 {% block content %}
 <div class="container d-flex justify-content-center align-items-center mt-5" vocab="http://schema.org/" typeof="WebPage">
-    <form method="POST" class="form" property="action" resource="#signInForm" typeof="Form" id="signInForm" about="#signInForm">
+    <form method="POST" class="form" typeof="http://schema.org/LoginAction">
         {% csrf_token %}
         <p class="title" property="name">Sign in</p>
 
         <label for="username">
-            <input class="input" type="text" name="username" id="username" placeholder="" required="" property="identifier" datatype="xsd:string" />
-            <span property="name">Username</span>
+            <input class="input" type="text" name="username" id="username" required property="agent" />
+            <span>Username</span>
         </label>
 
         <label for="password">
-            <input class="input" type="password" name="password" id="password" placeholder="" required="" property="password" datatype="xsd:string" />
-            <span property="name">Password</span>
+            <input class="input" type="password" name="password" id="password" required />
+            <span>Password</span>
         </label>
 
         {% if form.non_field_errors %}
-        <div class="error" property="error">
+        <div class="error">
             {% for error in form.non_field_errors %}
             <p property="description">{{ error }}</p>
             {% endfor %}
         </div>
         {% endif %}
 
-        <button class="submit" type="submit" property="action">Submit</button>
-        <p class="register">Don't have an account? <a href="{% url 'register' %}" property="url">Sign up here</a></p>
+        <button class="submit" type="submit" property="target">Submit</button>
+        <p class="register">Don't have an account? <a href="{% url 'register' %}">Sign up here</a></p>
     </form>
 </div>
 {% endblock %}
